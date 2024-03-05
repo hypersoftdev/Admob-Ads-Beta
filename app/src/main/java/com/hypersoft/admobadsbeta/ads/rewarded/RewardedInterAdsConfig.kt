@@ -34,8 +34,8 @@ class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepos
 
         when (adType) {
             REWARDED_FEATURE -> {
-                interAdId = getResString(R.string.admob_rewarded_id)
-                isRemoteEnable = diComponent.rcvRewardedFeature == 1
+                interAdId = getResString(R.string.admob_rewarded_inter_id)
+                isRemoteEnable = diComponent.rcvRewardedInterFeature == 1
             }
         }
 

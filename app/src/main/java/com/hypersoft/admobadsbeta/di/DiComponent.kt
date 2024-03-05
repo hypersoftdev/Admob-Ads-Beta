@@ -13,10 +13,11 @@ class DiComponent {
     val isInternetConnected = true
     val isAppPurchased = false
 
-    val rcvInterSplash = 0
-    val rcvInterHome = 0
-    val rcvInterSave = 0
+    val rcvInterSplash = 1
+    val rcvInterHome = 1
+    val rcvInterSave = 1
 
-    val rcvRewardedFeature = 0
+    val rcvRewardedFeature = 1
+    val rcvRewardedInterFeature = 1
 
 }
