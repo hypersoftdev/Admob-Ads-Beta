@@ -13,6 +13,9 @@ class DiComponent {
     val isInternetConnected = true
     val isAppPurchased = false
 
+    val rcvBannerHome = 1
+    val rcvBannerGallery = 1
+
     val rcvInterSplash = 1
     val rcvInterHome = 1
     val rcvInterSave = 1

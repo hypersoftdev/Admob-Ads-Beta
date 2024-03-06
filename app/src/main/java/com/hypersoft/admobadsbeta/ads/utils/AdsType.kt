@@ -10,6 +10,11 @@ package com.hypersoft.admobadsbeta.ads.utils
 
 object AdsType {
 
+    const val BANNER_HOME = "Home"
+    const val BANNER_GALLERY = "Gallery"
+
+
+
     const val INTER_SPLASH = "Splash"
     const val INTER_HOME = "Home"
     const val INTER_SAVE = "Save"

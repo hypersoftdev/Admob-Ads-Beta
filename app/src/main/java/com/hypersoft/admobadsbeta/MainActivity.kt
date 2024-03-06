@@ -1,27 +1,78 @@
 package com.hypersoft.admobadsbeta
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
-import com.hypersoft.admobadsbeta.ads.utils.AdsType
+import com.hypersoft.admobadsbeta.ads.banners.BannerAdsConfig
+import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.interstitial.InterstitialAdsConfig
 import com.hypersoft.admobadsbeta.ads.interstitial.callbacks.InterstitialOnShowCallBack
+import com.hypersoft.admobadsbeta.ads.utils.AdsType
 
 class MainActivity : AppCompatActivity() {
 
     private val interstitialAdsConfig by lazy { InterstitialAdsConfig(this) }
 
+    companion object{
+        val bannerAdsConfig by lazy { BannerAdsConfig() }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<MaterialButton>(R.id.mb_call).setOnClickListener { loadInter() }
-        //loadInter()
-        //loadInterCounter()
+        loadBanner()
+        initObserver()
 
-    //showInter()
+        //findViewById<MaterialButton>(R.id.mb_call).setOnClickListener { loadInter() }
+        findViewById<MaterialButton>(R.id.mb_call).setOnClickListener { startActivity(Intent(this, ActivitySecond::class.java)) }
     }
+
+    private fun loadBanner() {
+        bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_HOME, BannerType.ADAPTIVE)
+    }
+
+    private fun initObserver() {
+        bannerAdsConfig.bannerObserver.observe(this as LifecycleOwner) { bannerResponse ->
+            Log.d("TAG", "a: initObserver: $bannerResponse")
+            Toast.makeText(this, "A: ${bannerResponse?.adType}", Toast.LENGTH_SHORT).show()
+            when (bannerResponse?.loadState) {
+                -1 -> {
+                    // Default state
+                    bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_HOME, BannerType.ADAPTIVE)
+                }
+
+                0 -> {
+                    // Failure case (hide container)
+                    findViewById<FrameLayout>(R.id.fl_container).removeAllViews()
+                    findViewById<FrameLayout>(R.id.fl_container).visibility = View.GONE
+                }
+
+                1 -> {
+                    // Success case
+                    bannerAdsConfig.showBannerAd(
+                        adType = AdsType.BANNER_HOME,
+                        adView = bannerResponse.adView,
+                        viewGroup = findViewById<FrameLayout>(R.id.fl_container)
+                    )
+                }
+
+                2 -> {
+                    // ad is loading
+                }
+            }
+        }
+    }
+
+
+    /* ______________________________________ Interstitial ______________________________________ */
 
     private fun loadInter() {
         Log.d("AdsInformation", "loadInterstitial -> Validating ad call")
