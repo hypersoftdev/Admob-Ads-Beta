@@ -1,5 +1,6 @@
 package com.hypersoft.admobadsbeta.ads.banners.models
 
+import android.view.ViewGroup
 import com.google.android.gms.ads.AdView
 
 /**
@@ -20,7 +21,8 @@ import com.google.android.gms.ads.AdView
  */
 
 data class BannerResponse(
-    val adType: String?,
+    val adType: String,
     var adView: AdView?,
-    var loadState : Int = -1
+    var loadState: Int = -1,
+    var viewGroup: ViewGroup
 )

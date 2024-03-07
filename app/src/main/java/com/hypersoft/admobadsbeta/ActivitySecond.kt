@@ -1,14 +1,8 @@
 package com.hypersoft.admobadsbeta
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
-import com.hypersoft.admobadsbeta.MainActivity.Companion.bannerAdsConfig
-import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
+import com.google.android.material.button.MaterialButton
 import com.hypersoft.admobadsbeta.ads.utils.AdsType
 
 class ActivitySecond : AppCompatActivity() {
@@ -19,14 +13,17 @@ class ActivitySecond : AppCompatActivity() {
 
         loadBanner()
         initObserver()
+
+        findViewById<MaterialButton>(R.id.mb_back).setOnClickListener { finish() }
     }
 
     private fun loadBanner() {
-        bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_GALLERY, BannerType.ADAPTIVE)
+       // bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_GALLERY, BannerType.ADAPTIVE)
+        MainActivity.bannerAds.loadBannerAd(this, AdsType.BANNER_GALLERY, findViewById(R.id.fl_container))
     }
 
     private fun initObserver() {
-        bannerAdsConfig.bannerObserver.observe(this as LifecycleOwner) { bannerResponse ->
+       /* bannerAdsConfig.bannerObserver.observe(this as LifecycleOwner) { bannerResponse ->
             Log.d("TAG", "b: initObserver: $bannerResponse")
             Toast.makeText(this, "B: ${bannerResponse?.adType}", Toast.LENGTH_SHORT).show()
             when (bannerResponse?.loadState) {
@@ -53,6 +50,11 @@ class ActivitySecond : AppCompatActivity() {
                     // ad is loading
                 }
             }
-        }
+        }*/
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MainActivity.bannerAds.onDestroy(AdsType.BANNER_GALLERY)
     }
 }

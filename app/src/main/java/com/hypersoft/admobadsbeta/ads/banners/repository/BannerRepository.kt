@@ -10,6 +10,7 @@ import android.view.Display
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.core.content.getSystemService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -51,7 +52,7 @@ abstract class BannerRepository {
         listener: BannerOnLoadCallBack?,
     ) {
         this.mAdType = adType
-        hashmap.putIfAbsent(adType, BannerResponse(adType = adType, adView = null, loadState = -1))
+        hashmap.putIfAbsent(adType, BannerResponse(adType = adType, adView = null, loadState = -1, viewGroup = FrameLayout(activity!!)))
 
         hashmap[adType]?.let { bannerResponse ->
             if (bannerResponse.loadState == 1) {
