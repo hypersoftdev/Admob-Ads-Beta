@@ -41,7 +41,7 @@ abstract class BannerRepository {
     private var isBannerLoading = false
 
     private var requestList: MutableList<BannerResponse> = mutableListOf()
-    private val removeList: MutableList<BannerResponse> = mutableListOf()
+    private val impressionList: MutableList<BannerResponse> = mutableListOf()
     private val deleteList: MutableList<BannerResponse> = mutableListOf()
 
     protected fun loadBanner(
@@ -98,13 +98,12 @@ abstract class BannerRepository {
             return
         }
 
-
-        val shouldAdd = removeList.indexOfFirst { it.adType == adType }
+        val shouldAdd = impressionList.indexOfFirst { it.adType == adType }
 
         // ReShowAd
         if (shouldAdd != -1) {
             Log.d("AdsInformation", "$adType -> loadBanner: Reshowing Ad")
-            removeList.find { it.adType == adType }?.let {
+            impressionList.find { it.adType == adType }?.let {
                 usingAdView = it.adView
                 it.viewGroup = viewGroup
                 viewGroup.addCleanView(it.adView)
@@ -129,6 +128,7 @@ abstract class BannerRepository {
                 Log.d("AdsInformation", "$adType -> loadBanner: Requesting admob server for ad...")
 
                 // make a new call to load a ad
+                viewGroup.visibility = View.VISIBLE
                 loadAd(activity, bannerId, adType, listener)
             } else {
 
@@ -211,7 +211,7 @@ abstract class BannerRepository {
         }
 
         bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
-        removeList.add(requestList.removeLast())
+        impressionList.add(requestList.removeLast())
     }
 
     private fun checkIfThereIsAnymoreToLoad() {
@@ -262,7 +262,7 @@ abstract class BannerRepository {
     }
 
     fun onDestroy(adType: String) {
-        removeList.find { it.adType == adType }?.let { node ->
+        impressionList.find { it.adType == adType }?.let { node ->
             if (usingAdView == node.adView) {
                 usingAdView = null
                 return
@@ -271,7 +271,7 @@ abstract class BannerRepository {
 
             node.adView?.destroy()
             node.viewGroup.removeAllViews()
-            removeList.remove(node)
+            impressionList.remove(node)
         }
         requestList.find { it.adType == adType }?.let { node ->
             val existingResponse = deleteList.find { it.adType == adType }
