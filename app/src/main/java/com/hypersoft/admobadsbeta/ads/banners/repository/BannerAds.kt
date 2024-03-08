@@ -83,19 +83,10 @@ class BannerAds {
         }
     }
 
-
-    var counter = 0
-
     private fun loadAd(context: Context) {
         isAdLoading = true
         val adView = AdView(context)
-        if (counter == 0) {
-            adView.adUnitId = context.getString(R.string.admob_banner_id_2)
-            counter++
-        } else {
-            adView.adUnitId = context.getString(R.string.admob_banner_id)
-        }
-        //adView.adUnitId = context.getString(R.string.admob_banner_id)
+        adView.adUnitId = context.getString(R.string.admob_banner_id)
         adView.setAdSize(AdSize.BANNER)
         adView.adListener = object : AdListener() {
             override fun onAdLoaded() {

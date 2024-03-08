@@ -5,7 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
-import com.hypersoft.admobadsbeta.ads.banners.repository.BannerAds
+import com.hypersoft.admobadsbeta.ads.banners.BannerAdsConfig
+import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.interstitial.InterstitialAdsConfig
 import com.hypersoft.admobadsbeta.ads.interstitial.callbacks.InterstitialOnShowCallBack
 import com.hypersoft.admobadsbeta.ads.utils.AdsType
@@ -15,8 +16,7 @@ class MainActivity : AppCompatActivity() {
     private val interstitialAdsConfig by lazy { InterstitialAdsConfig(this) }
 
     companion object {
-        //val bannerAdsConfig by lazy { BannerAdsConfig() }
-        val bannerAds by lazy { BannerAds() }
+        val bannerAdsConfig by lazy { BannerAdsConfig() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         loadBanner()
-        initObserver()
 
         //findViewById<MaterialButton>(R.id.mb_call).setOnClickListener { loadInter() }
         findViewById<MaterialButton>(R.id.mb_call).setOnClickListener {
@@ -34,47 +33,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadBanner() {
-        //bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_HOME, BannerType.ADAPTIVE)
-        bannerAds.loadBannerAd(this, AdsType.BANNER_HOME, findViewById(R.id.fl_container))
+        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.ADAPTIVE, viewGroup = findViewById(R.id.fl_container))
     }
 
     override fun onRestart() {
         super.onRestart()
+        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.ADAPTIVE, viewGroup = findViewById(R.id.fl_container))
         //bannerAds.loadBannerAd(this, AdsType.BANNER_HOME, findViewById(R.id.fl_container))
     }
-
-    private fun initObserver() {
-        /*bannerAdsConfig.bannerObserver.observe(this as LifecycleOwner) { bannerResponse ->
-            Log.d("TAG", "a: initObserver: $bannerResponse")
-            Toast.makeText(this, "A: ${bannerResponse?.adType}", Toast.LENGTH_SHORT).show()
-            when (bannerResponse?.loadState) {
-                -1 -> {
-                    // Default state
-                    bannerAdsConfig.loadBannerAd(this, AdsType.BANNER_HOME, BannerType.ADAPTIVE)
-                }
-
-                0 -> {
-                    // Failure case (hide container)
-                    findViewById<FrameLayout>(R.id.fl_container).removeAllViews()
-                    findViewById<FrameLayout>(R.id.fl_container).visibility = View.GONE
-                }
-
-                1 -> {
-                    // Success case
-                    bannerAdsConfig.showBannerAd(
-                        adType = AdsType.BANNER_HOME,
-                        adView = bannerResponse.adView,
-                        viewGroup = findViewById<FrameLayout>(R.id.fl_container)
-                    )
-                }
-
-                2 -> {
-                    // ad is loading
-                }
-            }
-        }*/
-    }
-
 
     /* ______________________________________ Interstitial ______________________________________ */
 
@@ -137,6 +103,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        bannerAds.onDestroy(AdsType.BANNER_HOME)
+        bannerAdsConfig.onDestroy(AdsType.BANNER_HOME)
     }
 }
