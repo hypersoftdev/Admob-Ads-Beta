@@ -3,25 +3,19 @@ package com.hypersoft.admobadsbeta.ads.banners.repository
 import android.app.Activity
 import android.hardware.display.DisplayManager
 import android.os.Build
-import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.core.content.getSystemService
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerOnLoadCallBack
-import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
 
 /**
@@ -34,170 +28,167 @@ import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
 
 abstract class BannerRepository {
 
-    private var mAdview: AdView? = null
-    private var isBannerLoading = false
-    private var mAdType = ""
+    private var mActivity: Activity? = null
+    private var mAdType: String = ""
+    private var mBannerId: String = ""
+    private var isAdEnable = true
+    private var isAppPurchased = false
+    private var isInternetConnected = false
+    private var listener: BannerOnLoadCallBack? = null
 
-    private val _bannerObserver = MutableLiveData<BannerResponse?>()
-    val bannerObserver: LiveData<BannerResponse?> get() = _bannerObserver
+
+
+    private var usingAdView: AdView? = null
+
+    private var mAdView: AdView? = null
+    private var isBannerLoading = false
+
+    private var requestList: MutableList<BannerResponse> = mutableListOf()
+    private val removeList: MutableList<BannerResponse> = mutableListOf()
+    private val deleteList: MutableList<BannerResponse> = mutableListOf()
 
     protected fun loadBanner(
         activity: Activity?,
         adType: String,
-        bannerType: BannerType,
         bannerId: String,
-        adEnable: Boolean,
+        isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        viewGroup: ViewGroup,
         listener: BannerOnLoadCallBack?,
     ) {
+        this.mActivity = activity
         this.mAdType = adType
-        hashmap.putIfAbsent(adType, BannerResponse(adType = adType, adView = null, loadState = -1, viewGroup = FrameLayout(activity!!)))
-
-        hashmap[adType]?.let { bannerResponse ->
-            if (bannerResponse.loadState == 1) {
-                // already available
-                //_bannerObserver.postValue(bannerResponse)
-                return
-            }
-        }
-
-        /*if (isBannerLoaded()) {
-            Log.i("AdsInformation", "$adType -> loadBanner: Already loaded")
-            listener?.onPreloaded()
-            return
-        }*/
-
-        if (isBannerLoading) {
-            Log.d("AdsInformation", "$adType -> loadBanner: Ad is already loading...")
-            // No need to invoke callback, in some cases (e.g. activity recreation) it interrupts our response, as we are waiting for response in Splash
-            // listener?.onResponse()  // Uncomment if u still need to listen this case
-            return
-        }
+        this.mBannerId = bannerId
+        this.isAdEnable = isAdEnable
+        this.isAppPurchased = isAppPurchased
+        this.isInternetConnected = isInternetConnected
+        this.listener = listener
 
         if (isAppPurchased) {
             Log.e("AdsInformation", "$adType -> loadBanner: Premium user")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
-        if (adEnable.not()) {
+        if (isAdEnable.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Remote config is off")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Internet is not connected")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
         if (activity == null) {
             Log.e("AdsInformation", "$adType -> loadBanner: Context is null")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
         if (activity.isFinishing || activity.isDestroyed) {
             Log.e("AdsInformation", "$adType -> loadBanner: activity is finishing or destroyed")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
         if (bannerId.trim().isEmpty()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Ad id is empty")
             listener?.onResponse(false)
-            hashmap[adType]?.loadState = 0
-            _bannerObserver.postValue(hashmap[adType])
             return
         }
 
-        Log.d("AdsInformation", "$adType -> loadBanner: Requesting admob server for ad...")
-        isBannerLoading = true
-        hashmap[adType]?.loadState = 2
 
-        val adRequest = AdRequest.Builder()
+        val shouldAdd = removeList.indexOfFirst { it.adType == adType }
 
-        val adSize = when (bannerType) {
-            BannerType.ADAPTIVE -> getAdSize(activity) ?: AdSize.BANNER
-
-            BannerType.COLLAPSIBLE_TOP -> {
-                adRequest.addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                    putString("collapsible", "top")
-                })
-                getAdSize(activity) ?: AdSize.BANNER
+        // ReShowAd
+        if (shouldAdd != -1) {
+            Log.d("AdsInformation", "$adType -> loadBanner: Reshowing Ad")
+            removeList.find { it.adType == adType }?.let {
+                usingAdView = it.adView
+                it.viewGroup = viewGroup
+                viewGroup.addCleanView(it.adView)
             }
-
-            BannerType.COLLAPSIBLE_BOTTOM -> {
-                adRequest.addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                    putString("collapsible", "bottom")
-                })
-                getAdSize(activity) ?: AdSize.BANNER
-            }
+            return
         }
 
+        val existingBannerResponse = requestList.find { it.adType == adType }
+        val adView = existingBannerResponse?.adView
+        requestList.remove(existingBannerResponse)
+        existingBannerResponse?.let { deleteList.add(it) }
+
+
+        if (adView == null) {
+            // load ad for new Item
+            val bannerResponse = BannerResponse(adType = adType, adView = null, viewGroup = viewGroup)
+            requestList.add(bannerResponse)
+
+
+            // check if already loading
+            if (!isBannerLoading && mAdView == null) {
+                Log.d("AdsInformation", "$adType -> loadBanner: Requesting admob server for ad...")
+
+                // make a new call to load a ad
+                loadAd(activity, bannerId, adType, listener)
+            } else {
+
+                // check, maybe a preloaded is available
+                mAdView?.let { ad ->
+                    bannerResponse.adView = ad
+                    showBanner(bannerResponse)
+                }
+            }
+        } else {
+            val bannerResponse = BannerResponse(adType = adType, adView = adView, viewGroup = viewGroup)
+            requestList.add(bannerResponse)
+            showBanner(bannerResponse)
+        }
+    }
+
+    private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerOnLoadCallBack?) {
+        isBannerLoading = true
+
+        val adSize = getAdSize(activity) ?: AdSize.BANNER
         val adView = AdView(activity).apply {
             adUnitId = bannerId
             setAdSize(adSize)
         }
 
         adView.adListener = getListener(adType, adView, listener)
-        adView.loadAd(adRequest.build())
+        adView.loadAd(AdRequest.Builder().build())
     }
-
-    private val hashmap = HashMap<String, BannerResponse>()
 
     private fun getListener(adType: String, adView: AdView, listener: BannerOnLoadCallBack?): AdListener {
         return object : AdListener() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                super.onAdFailedToLoad(adError)
-                Log.e("AdsInformation", "$adType -> loadBanner: onAdFailedToLoad: ${adError.message}")
-                isBannerLoading = false
-                mAdview = null
-                listener?.onResponse(false)
-                hashmap[adType]?.loadState = 0
-                _bannerObserver.postValue(hashmap[adType])
-            }
-
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 Log.i("AdsInformation", "$adType -> loadBanner: onAdLoaded")
-                isBannerLoading = false
-                mAdview = adView
-                listener?.onResponse(true)
 
-                if (adType == mAdType) {
-                    hashmap[adType]?.loadState = 1
-                    hashmap[adType]?.adView = adView
-                    _bannerObserver.postValue(hashmap[adType])
-                } else {
-                    hashmap[adType]?.loadState = -1
-                    hashmap[adType]?.adView = null
-
-                    hashmap[mAdType]?.loadState = 1
-                    hashmap[mAdType]?.adView = adView
-                    _bannerObserver.postValue(hashmap[mAdType])
+                mAdView = adView
+                requestList.lastOrNull()?.let {
+                    it.adView = adView
+                    showBanner(it)
                 }
+                isBannerLoading = false
+                listener?.onResponse(true)
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                super.onAdFailedToLoad(adError)
+                Log.e("AdsInformation", "$adType -> loadBanner: onAdFailedToLoad: ${adError.message}")
+                mAdView = null
+                isBannerLoading = false
+                checkIfThereIsAnymoreToLoad()
             }
 
             override fun onAdImpression() {
                 super.onAdImpression()
                 Log.d("AdsInformation", "$adType -> loadBanner: onAdImpression")
-                // _bannerObserver.postValue(null)
-
-                hashmap[mAdType]?.loadState = 3
-                _bannerObserver.postValue(hashmap[mAdType])
+                mAdView = null
+                checkIfThereIsAnymoreToLoad()
             }
 
             override fun onAdOpened() {
@@ -214,69 +205,36 @@ abstract class BannerRepository {
         }
     }
 
-    protected fun showBanner(
-        adType: String,
-        adView: AdView?,
-        viewGroup: ViewGroup,
-        isAppPurchased: Boolean
-    ) {
-
-        /*if (adView == null) {
-            Log.e("AdsInformation", "$adType -> showBanner: Banner is not loaded yet")
-            listener?.onAdFailedToShow()
-            return
-        }*/
-
+    protected fun showBanner(bannerResponse: BannerResponse) {
         if (isAppPurchased) {
-            Log.e("AdsInformation", "$adType -> showBanner: Premium user")
-            viewGroup.removeAllViews()
-            viewGroup.visibility = View.GONE
-
-            /*if (isBannerLoaded()) {
-                Log.d("AdsInformation", "$adType -> Destroying loaded banner ad due to Premium user")
-                mAdview = null
-            }
-            listener?.onAdFailedToShow()*/
+            Log.e("AdsInformation", "${bannerResponse.adType} -> showBanner: Premium user")
+            bannerResponse.viewGroup.removeAllViews()
+            bannerResponse.viewGroup.visibility = View.GONE
             return
         }
 
-        if (adView == null) {
-            Log.e("AdsInformation", "$adType -> showBanner: Banner failed to show, ad is null")
-            viewGroup.removeAllViews()
-            viewGroup.visibility = View.GONE
-        } else {
-            Log.e("AdsInformation", "$adType -> showBanner: Banner showing admob server ad")
-            viewGroup.addCleanView(adView)
-            viewGroup.visibility = View.VISIBLE
+        bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
+        removeList.add(requestList.removeLast())
+    }
+
+    private fun checkIfThereIsAnymoreToLoad() {
+        val bannerResponse = requestList.lastOrNull()
+        bannerResponse?.let {
+            // No need to load ad, if adType is same on top.
+            if (mAdType == it.adType) return
+
+            // loading ad for backstack
+            loadBanner(
+                activity = mActivity,
+                adType = it.adType,
+                bannerId = mBannerId,
+                isAdEnable = isAdEnable,
+                isAppPurchased = isAppPurchased,
+                isInternetConnected = isInternetConnected,
+                viewGroup = it.viewGroup,
+                listener = listener
+            )
         }
-
-
-        /*mAdview?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                Log.d("AdsInformation", "admob Banner onAdDismissedFullScreenContent")
-                listener?.onAdDismissedFullScreenContent()
-                mAdview = null
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                Log.e("AdsInformation", "admob Banner onAdFailedToShowFullScreenContent: ${adError.message}")
-                listener?.onAdFailedToShow()
-                mAdview = null
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                Log.d("AdsInformation", "admob Banner onAdShowedFullScreenContent")
-                listener?.onAdShowedFullScreenContent()
-                mAdview = null
-            }
-
-            override fun onAdImpression() {
-                Log.d("AdsInformation", "admob Banner onAdImpression")
-                listener?.onAdImpression()
-                Handler(Looper.getMainLooper()).postDelayed({ listener?.onAdImpressionDelayed() }, 300)
-            }
-        }
-        mAdview?.show(activity)*/
     }
 
     @Suppress("DEPRECATION")
@@ -306,7 +264,29 @@ abstract class BannerRepository {
         view?.let { this.addView(it) }
     }
 
-    fun isBannerLoaded(): Boolean {
-        return mAdview != null
+    fun onDestroy(adType: String) {
+        removeList.find { it.adType == adType }?.let { node ->
+            if (usingAdView == node.adView) {
+                usingAdView = null
+                return
+            }
+            Log.d("Magic", "$adType -> onDestroy: called")
+
+            node.adView?.destroy()
+            node.viewGroup.removeAllViews()
+            removeList.remove(node)
+        }
+        requestList.find { it.adType == adType }?.let { node ->
+            val existingResponse = deleteList.find { it.adType == adType }
+            if (existingResponse != null) {
+                deleteList.remove(existingResponse)
+                return
+            }
+            Log.d("Magic", "$adType -> onDestroy: called")
+
+            node.adView?.destroy()
+            node.viewGroup.removeAllViews()
+            requestList.remove(node)
+        }
     }
 }

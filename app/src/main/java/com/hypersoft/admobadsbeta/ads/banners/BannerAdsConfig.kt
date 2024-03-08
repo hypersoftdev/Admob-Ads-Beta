@@ -5,7 +5,6 @@ package com.hypersoft.admobadsbeta.ads.banners
 import android.app.Activity
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import com.google.android.gms.ads.AdView
 import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerOnLoadCallBack
 import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
@@ -25,7 +24,7 @@ class BannerAdsConfig : BannerRepository() {
 
     private val diComponent by lazy { DiComponent() }
 
-    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, listener: BannerOnLoadCallBack? = null) {
+    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup, listener: BannerOnLoadCallBack? = null) {
         var bannerId = ""
         var isRemoteEnable = false
 
@@ -44,21 +43,12 @@ class BannerAdsConfig : BannerRepository() {
         loadBanner(
             activity = activity,
             adType = adType,
-            bannerType = bannerType,
             bannerId = bannerId,
-            adEnable = isRemoteEnable,
+            isAdEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
-            listener = listener
-        )
-    }
-
-    fun showBannerAd(adType: String, adView: AdView?, viewGroup: ViewGroup) {
-        showBanner(
-            adType = adType,
-            adView = adView,
             viewGroup = viewGroup,
-            isAppPurchased = diComponent.isAppPurchased,
+            listener = listener
         )
     }
 

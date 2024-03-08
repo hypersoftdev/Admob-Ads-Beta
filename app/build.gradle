@@ -24,6 +24,7 @@ android {
 
             // Banner
             resValue "string", "admob_banner_id", "ca-app-pub-3940256099942544/2014213617"
+            resValue "string", "admob_banner_id_2", "ca-app-pub-3940256099942544/201421361"
 
             // Inter
             resValue "string", "admob_inter_id", "ca-app-pub-3940256099942544/1033173712"

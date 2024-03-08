@@ -22,74 +22,92 @@ import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
 
 class BannerAds {
 
-    private var isAdLoading = false
-    private var mAdView: AdView? = null
-
-    private var list: MutableList<BannerResponse> = mutableListOf()
-    private val removeList: MutableList<BannerResponse> = mutableListOf()
     private lateinit var mContext: Context
+    private var mAdView: AdView? = null
+    private var usingAdView: AdView? = null
+    private var currentAdType: String = ""
+    private var isAdLoading = false
 
-    fun loadBannerAd(context: Context, adType: String, adContainer: ViewGroup) {        // Home
-        Log.d("Magic", "--------------------------------------------------------------------------------")
-        Log.d("Magic", "$adType load, ListSize {${list.size}}-- $adContainer")
+
+    private var requestList: MutableList<BannerResponse> = mutableListOf()
+    private val removeList: MutableList<BannerResponse> = mutableListOf()
+    private val deleteList: MutableList<BannerResponse> = mutableListOf()
+
+    fun loadBannerAd(context: Context, adType: String, adContainer: ViewGroup) {
         this.mContext = context
+        this.currentAdType = adType
+
         val shouldAdd = removeList.indexOfFirst { it.adType == adType }
-        if (shouldAdd == -1) {
-            Log.d("Magic", "if ****")
-            val bannerResponse = list.find { it.adType == adType }
-            if (bannerResponse == null) {
-                list.add(BannerResponse(adType = adType, adView = null, viewGroup = adContainer))
-            } else {
-                bannerResponse.viewGroup = adContainer
+
+        // ReShowAd
+        if (shouldAdd != -1) {
+            Log.v("Magic", "$adType -> loadBannerAd: Reshowing Ad: ${adContainer.hashCode()}")
+            removeList.find { it.adType == adType }?.apply {
+                usingAdView = adView
+                viewGroup = adContainer
+                viewGroup.addCleanView(adView)
             }
+            return
+        }
 
-            if (isAdLoading.not() && mAdView == null) {
-                Log.d("Magic", "loadBannerAd: ---------------------------------")
-                Log.d("Magic", "loadBannerAd: called")
-                loadAd(mContext, adType)
+        Log.d("Magic", "$adType -> loadBannerAd: called: ${adContainer.hashCode()}")
+        val existingBannerResponse = requestList.find { it.adType == adType }
+        val adView = existingBannerResponse?.adView
+        requestList.remove(existingBannerResponse)
+        existingBannerResponse?.let { deleteList.add(it) }
+
+
+        if (adView == null) {
+            // load ad for new Item
+            val bannerResponse = BannerResponse(adType = adType, adView = null, viewGroup = adContainer)
+            requestList.add(bannerResponse)
+
+
+            // check if already loading
+            if (!isAdLoading && mAdView == null) {
+
+                // make a new call to load a ad
+                loadAd(context)
             } else {
-                Log.d("Magic", "inner else ===")
-                val bannerResponse = list.lastOrNull()
-                bannerResponse?.let {
-                    mAdView?.let { adView ->
-                        Log.d("Magic", "inner else => assigning")
-                        bannerResponse.adView = adView
-                        showAd(bannerResponse.viewGroup, adView)
-                    }
-                }
 
-                if (isAdLoading.not()) {
-                    checkIfThereIsAnyQuwara()
+                // check, maybe a preloaded is available
+                mAdView?.let { ad ->
+                    bannerResponse.adView = ad
+                    showAd(bannerResponse)
                 }
             }
         } else {
-            Log.d("Magic", "else ****")
-            val bannerResponse = removeList.find { it.adType == adType }
-            bannerResponse?.let {
-                it.viewGroup = adContainer
-                it.viewGroup.addCleanView(it.adView)
-            }
+            val bannerResponse = BannerResponse(adType = adType, adView = adView, viewGroup = adContainer)
+            requestList.add(bannerResponse)
+            showAd(bannerResponse)
         }
     }
 
-    private fun loadAd(context: Context, adType: String) {
+
+    var counter = 0
+
+    private fun loadAd(context: Context) {
         isAdLoading = true
         val adView = AdView(context)
-        adView.adUnitId = context.getString(R.string.admob_banner_id)
+        if (counter == 0) {
+            adView.adUnitId = context.getString(R.string.admob_banner_id_2)
+            counter++
+        } else {
+            adView.adUnitId = context.getString(R.string.admob_banner_id)
+        }
+        //adView.adUnitId = context.getString(R.string.admob_banner_id)
         adView.setAdSize(AdSize.BANNER)
         adView.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 Log.i("Magic", "onAdLoaded: called")
-
                 mAdView = adView
-                val bannerResponse = list.lastOrNull()
-                bannerResponse?.let {
-                    Log.d("Magic", "${it.adType} show -- ${it.viewGroup}")
+                requestList.lastOrNull()?.let {
                     it.adView = adView
-                    showAd(it.viewGroup, adView)
+                    showAd(it)
                 }
                 isAdLoading = false
+                checkIfThereIsAnyQuwara()
             }
 
             override fun onAdFailedToLoad(p0: LoadAdError) {
@@ -101,32 +119,25 @@ class BannerAds {
 
             override fun onAdImpression() {
                 super.onAdImpression()
-                Log.w("Magic", "onAdImpression: called")
+                Log.i("Magic", "onAdImpression: called")
                 mAdView = null
-                //isAdLoading = false
                 checkIfThereIsAnyQuwara()
             }
         }
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adView.loadAd(AdRequest.Builder().build())
     }
 
-    private fun showAd(viewGroup: ViewGroup?, adView: AdView?) {
-        viewGroup?.addCleanView(adView)
-        val removeLast = list.removeLast()
-        removeList.add(removeLast)
-        Log.d("Magic", "showAd: called")
-        /*currentFrameLayout?.removeAllViews()
-        val (fragmentName, adContainer) = adRequestQueue.lastOrNull() ?: return
-        currentFrameLayout = adContainer
-        adContainer.addView(adView)
-        adRequestQueue.clear()*/
+
+    private fun showAd(bannerResponse: BannerResponse) {
+        bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
+        removeList.add(requestList.removeLast())
     }
 
     private fun checkIfThereIsAnyQuwara() {
-        val bannerResponse = list.lastOrNull()
+        val bannerResponse = requestList.lastOrNull()
         bannerResponse?.let {
-            Log.d("Magic", "filling up quwara's need: called")
+            // No need to load ad, if adType is same on top.
+            if (currentAdType == it.adType) return
             loadBannerAd(mContext, adType = it.adType, adContainer = it.viewGroup)
         }
     }
@@ -138,15 +149,28 @@ class BannerAds {
     }
 
     fun onDestroy(adType: String) {
-        Log.d("Magic", "onDestroy: $adType $removeList, $list")
-        val node = removeList.find { it.adType == adType }
-        val node2 = list.find { it.adType == adType }
-        node?.adView?.destroy()
-        node2?.adView?.destroy()
-        val result = removeList.remove(node)
-        Log.d("Magic", "$adType -> RemoveList: onDestroy: $result -- ${node?.viewGroup}")
-        val result2 = list.remove(node2)
+        removeList.find { it.adType == adType }?.let { node ->
+            if (usingAdView == node.adView) {
+                usingAdView = null
+                return
+            }
+            Log.d("Magic", "$adType -> onDestroy: called")
 
-        Log.d("Magic", "$adType -> List: onDestroy: $result2 -- ${node2?.viewGroup}")
+            node.adView?.destroy()
+            node.viewGroup.removeAllViews()
+            removeList.remove(node)
+        }
+        requestList.find { it.adType == adType }?.let { node ->
+            val existingResponse = deleteList.find { it.adType == adType }
+            if (existingResponse != null) {
+                deleteList.remove(existingResponse)
+                return
+            }
+            Log.d("Magic", "$adType -> onDestroy: called")
+
+            node.adView?.destroy()
+            node.viewGroup.removeAllViews()
+            requestList.remove(node)
+        }
     }
 }
