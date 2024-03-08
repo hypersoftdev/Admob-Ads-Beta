@@ -1,10 +1,11 @@
-package com.hypersoft.admobadsbeta
+package com.hypersoft.admobadsbeta.ads.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
+import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.ads.banners.BannerAdsConfig
 import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.interstitial.InterstitialAdsConfig

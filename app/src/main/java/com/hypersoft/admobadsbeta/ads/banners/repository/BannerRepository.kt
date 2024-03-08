@@ -116,7 +116,6 @@ abstract class BannerRepository {
         requestList.remove(existingBannerResponse)
         existingBannerResponse?.let { deleteList.add(it) }
 
-
         if (adView == null) {
             // load ad for new Item
             val bannerResponse = BannerResponse(adType = adType, adView = null, viewGroup = viewGroup)

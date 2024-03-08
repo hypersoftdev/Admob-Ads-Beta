@@ -1,4 +1,4 @@
-package com.hypersoft.admobadsbeta.ads.banners.repository
+package com.hypersoft.admobadsbeta.dummy
 
 import android.content.Context
 import android.util.Log
