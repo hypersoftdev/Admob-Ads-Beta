@@ -36,11 +36,8 @@ abstract class BannerRepository {
     private var isInternetConnected = false
     private var listener: BannerOnLoadCallBack? = null
 
-
-
-    private var usingAdView: AdView? = null
-
     private var mAdView: AdView? = null
+    private var usingAdView: AdView? = null
     private var isBannerLoading = false
 
     private var requestList: MutableList<BannerResponse> = mutableListOf()
@@ -270,7 +267,7 @@ abstract class BannerRepository {
                 usingAdView = null
                 return
             }
-            Log.d("Magic", "$adType -> onDestroy: called")
+            Log.d("AdsInformation", "$adType -> loadBanner: onDestroy")
 
             node.adView?.destroy()
             node.viewGroup.removeAllViews()
@@ -282,7 +279,7 @@ abstract class BannerRepository {
                 deleteList.remove(existingResponse)
                 return
             }
-            Log.d("Magic", "$adType -> onDestroy: called")
+            Log.d("AdsInformation", "$adType -> loadBanner: onDestroy")
 
             node.adView?.destroy()
             node.viewGroup.removeAllViews()
