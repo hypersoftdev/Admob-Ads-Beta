@@ -11,5 +11,6 @@ package com.hypersoft.admobadsbeta.ads.banners.enums
 enum class BannerType {
     ADAPTIVE,
     COLLAPSIBLE_TOP,
-    COLLAPSIBLE_BOTTOM
+    COLLAPSIBLE_BOTTOM,
+    MEDIUM_RECTANGLE
 }

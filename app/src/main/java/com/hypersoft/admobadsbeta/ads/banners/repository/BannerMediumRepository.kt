@@ -26,7 +26,7 @@ import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
-abstract class BannerRepository {
+class BannerMediumRepository {
 
     private var mActivity: Activity? = null
     private var mAdType: String = ""
@@ -44,7 +44,7 @@ abstract class BannerRepository {
     private val impressionList: MutableList<BannerResponse> = mutableListOf()
     private val deleteList: MutableList<BannerResponse> = mutableListOf()
 
-    protected fun loadBanner(
+    fun loadBanner(
         activity: Activity?,
         adType: String,
         bannerId: String,
@@ -147,7 +147,7 @@ abstract class BannerRepository {
         isBannerLoading = true
 
         val adRequest = AdRequest.Builder().build()
-        val adSize = getAdSize(activity) ?: AdSize.BANNER
+        val adSize = AdSize.MEDIUM_RECTANGLE
         val adView = AdView(activity).apply {
             adUnitId = bannerId
             setAdSize(adSize)
@@ -261,7 +261,7 @@ abstract class BannerRepository {
         view?.let { this.addView(it) }
     }
 
-    protected fun onDestroy(adType: String) {
+    fun onDestroy(adType: String) {
         impressionList.find { it.adType == adType }?.let { node ->
             if (usingAdView == node.adView) {
                 usingAdView = null

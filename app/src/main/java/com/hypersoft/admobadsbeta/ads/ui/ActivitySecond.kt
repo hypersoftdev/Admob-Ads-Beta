@@ -20,11 +20,11 @@ class ActivitySecond : AppCompatActivity() {
     }
 
     private fun loadBanner() {
-        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_GALLERY, bannerType = BannerType.ADAPTIVE, viewGroup = findViewById(R.id.fl_container))
+        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_GALLERY, bannerType = BannerType.MEDIUM_RECTANGLE, viewGroup = findViewById(R.id.fl_container))
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        bannerAdsConfig.onDestroy(AdsType.BANNER_GALLERY)
+        bannerAdsConfig.onDestroy(AdsType.BANNER_GALLERY, bannerType = BannerType.MEDIUM_RECTANGLE)
     }
 }

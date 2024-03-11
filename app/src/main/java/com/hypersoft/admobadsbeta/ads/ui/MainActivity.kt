@@ -34,12 +34,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadBanner() {
-        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.ADAPTIVE, viewGroup = findViewById(R.id.fl_container))
+        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.COLLAPSIBLE_BOTTOM, viewGroup = findViewById(R.id.fl_container))
     }
 
     override fun onRestart() {
         super.onRestart()
-        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.ADAPTIVE, viewGroup = findViewById(R.id.fl_container))
+        bannerAdsConfig.loadBannerAd(activity = this, adType = AdsType.BANNER_HOME, bannerType = BannerType.COLLAPSIBLE_BOTTOM, viewGroup = findViewById(R.id.fl_container))
         //bannerAds.loadBannerAd(this, AdsType.BANNER_HOME, findViewById(R.id.fl_container))
     }
 
@@ -104,6 +104,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        bannerAdsConfig.onDestroy(AdsType.BANNER_HOME)
+        bannerAdsConfig.onDestroy(AdsType.BANNER_HOME, bannerType = BannerType.COLLAPSIBLE_BOTTOM)
     }
 }

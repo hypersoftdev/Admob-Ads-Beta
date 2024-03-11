@@ -3,6 +3,7 @@ package com.hypersoft.admobadsbeta.ads.banners.repository
 import android.app.Activity
 import android.hardware.display.DisplayManager
 import android.os.Build
+import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.getSystemService
+import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -26,7 +28,7 @@ import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
-abstract class BannerRepository {
+class BannerCollapsibleBottomRepository {
 
     private var mActivity: Activity? = null
     private var mAdType: String = ""
@@ -44,7 +46,7 @@ abstract class BannerRepository {
     private val impressionList: MutableList<BannerResponse> = mutableListOf()
     private val deleteList: MutableList<BannerResponse> = mutableListOf()
 
-    protected fun loadBanner(
+    fun loadBanner(
         activity: Activity?,
         adType: String,
         bannerId: String,
@@ -146,7 +148,11 @@ abstract class BannerRepository {
     private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerOnLoadCallBack?) {
         isBannerLoading = true
 
-        val adRequest = AdRequest.Builder().build()
+        val adRequest = AdRequest.Builder()
+            .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
+                putString("collapsible", "bottom")
+            })
+            .build()
         val adSize = getAdSize(activity) ?: AdSize.BANNER
         val adView = AdView(activity).apply {
             adUnitId = bannerId
@@ -261,7 +267,7 @@ abstract class BannerRepository {
         view?.let { this.addView(it) }
     }
 
-    protected fun onDestroy(adType: String) {
+    fun onDestroy(adType: String) {
         impressionList.find { it.adType == adType }?.let { node ->
             if (usingAdView == node.adView) {
                 usingAdView = null
