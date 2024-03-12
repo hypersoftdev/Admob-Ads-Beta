@@ -51,7 +51,7 @@ class BannerMediumRepository {
         isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
-        viewGroup: ViewGroup,
+        viewGroup: ViewGroup?,
         listener: BannerCallBack?,
     ) {
         this.mActivity = activity
@@ -106,7 +106,7 @@ class BannerMediumRepository {
             impressionList.find { it.adType == adType }?.let {
                 usingAdView = it.adView
                 it.viewGroup = viewGroup
-                viewGroup.addCleanView(it.adView)
+                viewGroup?.addCleanView(it.adView)
             }
             return
         }
@@ -126,7 +126,7 @@ class BannerMediumRepository {
                 Log.d("AdsInformation", "$adType -> loadBanner: Requesting admob server for ad...")
 
                 // make a new call to load a ad
-                viewGroup.visibility = View.VISIBLE
+                viewGroup?.visibility = View.VISIBLE
                 loadAd(activity, bannerId, adType, listener)
             } else {
 
@@ -205,12 +205,12 @@ class BannerMediumRepository {
     protected fun showBanner(bannerResponse: BannerResponse) {
         if (isAppPurchased) {
             Log.e("AdsInformation", "${bannerResponse.adType} -> showBanner: Premium user")
-            bannerResponse.viewGroup.removeAllViews()
-            bannerResponse.viewGroup.visibility = View.GONE
+            bannerResponse.viewGroup?.removeAllViews()
+            bannerResponse.viewGroup?.visibility = View.GONE
             return
         }
 
-        bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
+        bannerResponse.viewGroup?.addCleanView(bannerResponse.adView)
         if (requestList.isNotEmpty()) {
             impressionList.add(requestList.removeLast())
         }
@@ -272,7 +272,7 @@ class BannerMediumRepository {
             Log.d("AdsInformation", "$adType -> loadBanner: onDestroy")
 
             node.adView?.destroy()
-            node.viewGroup.removeAllViews()
+            node.viewGroup?.removeAllViews()
             impressionList.remove(node)
         }
         requestList.find { it.adType == adType }?.let { node ->
@@ -284,7 +284,7 @@ class BannerMediumRepository {
             Log.d("AdsInformation", "$adType -> loadBanner: onDestroy")
 
             node.adView?.destroy()
-            node.viewGroup.removeAllViews()
+            node.viewGroup?.removeAllViews()
             requestList.remove(node)
         }
     }

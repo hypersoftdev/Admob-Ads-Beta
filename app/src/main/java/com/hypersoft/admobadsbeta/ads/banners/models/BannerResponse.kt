@@ -15,5 +15,5 @@ data class BannerResponse(
     val adType: String,
     var adView: AdView?,
     var isAdEnable: Boolean,
-    var viewGroup: ViewGroup
+    var viewGroup: ViewGroup?
 )

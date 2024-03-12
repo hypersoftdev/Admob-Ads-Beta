@@ -30,7 +30,7 @@ class BannerAdsConfig : BannerRepository() {
     private val bannerCollapsibleTopRepository by lazy { BannerCollapsibleTopRepository() }
     private val bannerCollapsibleBottomRepository by lazy { BannerCollapsibleBottomRepository() }
 
-    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup, listener: BannerCallBack? = null) {
+    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup?, listener: BannerCallBack? = null) {
         var bannerId = ""
         var isRemoteEnable = false
 
