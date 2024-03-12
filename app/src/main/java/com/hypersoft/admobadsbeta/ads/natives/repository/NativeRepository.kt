@@ -203,7 +203,7 @@ abstract class NativeRepository {
         }
     }
 
-    protected fun populateNative(nativeResponse: NativeResponse) {
+    private fun populateNative(nativeResponse: NativeResponse) {
         if (nativeResponse.viewGroup == null) {
             Log.d("AdsInformation", "${nativeResponse.adType} -> showNative: Preload available, no view found to show")
             return

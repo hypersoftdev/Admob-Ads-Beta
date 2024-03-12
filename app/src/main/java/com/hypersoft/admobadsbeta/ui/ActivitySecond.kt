@@ -23,6 +23,7 @@ class ActivitySecond : AppCompatActivity() {
 
     private fun loadNative() {
         nativeAdsConfig.loadNativeAd(activity = this, adType = AdsType.NATIVE_HOME, viewGroup = findViewById(R.id.fl_container))
+        nativeAdsConfig.loadAndShowNativeAd(activity = this, adType = AdsType.NATIVE_HOME, viewGroup = findViewById(R.id.fl_container_2))
     }
 
     private fun loadBanner() {

@@ -18,6 +18,17 @@
 
 
     <FrameLayout
+        android:id="@+id/fl_container_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#DCDCDC"
+        android:minHeight="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mb_back" />
+
+    <FrameLayout
         android:id="@+id/fl_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

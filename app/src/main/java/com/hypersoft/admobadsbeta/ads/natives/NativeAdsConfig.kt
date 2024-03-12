@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.ads.natives.callbacks.NativeCallBack
 import com.hypersoft.admobadsbeta.ads.natives.enums.NativeType
+import com.hypersoft.admobadsbeta.ads.natives.repository.NativeRegularRepository
 import com.hypersoft.admobadsbeta.ads.natives.repository.NativeRepository
 import com.hypersoft.admobadsbeta.ads.utils.AdsType
 import com.hypersoft.admobadsbeta.di.DiComponent
@@ -23,6 +24,7 @@ import com.hypersoft.admobadsbeta.di.DiComponent
 class NativeAdsConfig : NativeRepository() {
 
     private val diComponent by lazy { DiComponent() }
+    private val nativeRegularRepository by lazy { NativeRegularRepository() }
 
     fun loadNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: NativeCallBack? = null) {
         var nativeId = ""
@@ -44,6 +46,38 @@ class NativeAdsConfig : NativeRepository() {
         }
 
         loadNative(
+            activity = activity,
+            adType = adType,
+            nativeId = nativeId,
+            nativeType = nativeType,
+            isAdEnable = isRemoteEnable,
+            isAppPurchased = diComponent.isAppPurchased,
+            isInternetConnected = diComponent.isInternetConnected,
+            viewGroup = viewGroup,
+            listener = listener
+        )
+    }
+
+    fun loadAndShowNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup, listener: NativeCallBack? = null) {
+        var nativeId = ""
+        var nativeType = NativeType.NATIVE_MEDIUM_SMART
+        var isRemoteEnable = false
+
+        when (adType) {
+            AdsType.NATIVE_LANGUAGE -> {
+                nativeId = activity.getResString(R.string.admob_native_id)
+                isRemoteEnable = diComponent.rcvNativeLanguage == 1
+                nativeType = NativeType.NATIVE_MEDIUM_OLD_SMART
+            }
+
+            AdsType.NATIVE_HOME -> {
+                nativeId = activity.getResString(R.string.admob_native_id)
+                isRemoteEnable = diComponent.rcvNativeHome == 1
+                nativeType = NativeType.NATIVE_MEDIUM_SMART
+            }
+        }
+
+        nativeRegularRepository.loadAndShowNative(
             activity = activity,
             adType = adType,
             nativeId = nativeId,
