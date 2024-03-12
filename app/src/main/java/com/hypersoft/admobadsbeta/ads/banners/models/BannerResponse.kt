@@ -14,5 +14,6 @@ import com.google.android.gms.ads.AdView
 data class BannerResponse(
     val adType: String,
     var adView: AdView?,
+    var isAdEnable: Boolean,
     var viewGroup: ViewGroup
 )

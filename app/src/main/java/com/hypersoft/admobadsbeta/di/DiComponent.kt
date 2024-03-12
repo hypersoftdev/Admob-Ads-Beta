@@ -19,8 +19,11 @@ class DiComponent {
     val rcvInterSplash = 1
     val rcvInterHome = 1
     val rcvInterSave = 1
-
     val rcvRewardedFeature = 1
     val rcvRewardedInterFeature = 1
+
+    val rcvNativeLanguage = 1
+    val rcvNativeHome = 1
+
 
 }

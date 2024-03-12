@@ -17,7 +17,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerOnLoadCallBack
+import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerCallBack
 import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
 
 /**
@@ -36,7 +36,7 @@ class BannerCollapsibleTopRepository {
     private var isAdEnable = true
     private var isAppPurchased = false
     private var isInternetConnected = false
-    private var listener: BannerOnLoadCallBack? = null
+    private var listener: BannerCallBack? = null
 
     private var mAdView: AdView? = null
     private var usingAdView: AdView? = null
@@ -54,7 +54,7 @@ class BannerCollapsibleTopRepository {
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
         viewGroup: ViewGroup,
-        listener: BannerOnLoadCallBack?,
+        listener: BannerCallBack?,
     ) {
         this.mActivity = activity
         this.mAdType = adType
@@ -120,7 +120,7 @@ class BannerCollapsibleTopRepository {
 
         if (adView == null) {
             // load ad for new Item
-            val bannerResponse = BannerResponse(adType = adType, adView = null, viewGroup = viewGroup)
+            val bannerResponse = BannerResponse(adType = adType, adView = null, isAdEnable = isAdEnable, viewGroup = viewGroup)
             requestList.add(bannerResponse)
 
             // check if already loading
@@ -139,13 +139,13 @@ class BannerCollapsibleTopRepository {
                 }
             }
         } else {
-            val bannerResponse = BannerResponse(adType = adType, adView = adView, viewGroup = viewGroup)
+            val bannerResponse = BannerResponse(adType = adType, adView = adView, isAdEnable = isAdEnable, viewGroup = viewGroup)
             requestList.add(bannerResponse)
             showBanner(bannerResponse)
         }
     }
 
-    private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerOnLoadCallBack?) {
+    private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerCallBack?) {
         isBannerLoading = true
 
         val adRequest = AdRequest.Builder()
@@ -163,7 +163,7 @@ class BannerCollapsibleTopRepository {
         adView.loadAd(adRequest)
     }
 
-    private fun getListener(adType: String, adView: AdView, listener: BannerOnLoadCallBack?): AdListener {
+    private fun getListener(adType: String, adView: AdView, listener: BannerCallBack?): AdListener {
         return object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()

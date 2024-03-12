@@ -13,13 +13,11 @@ object AdsType {
     const val BANNER_HOME = "Home"
     const val BANNER_GALLERY = "Gallery"
 
-
-
     const val INTER_SPLASH = "Splash"
     const val INTER_HOME = "Home"
     const val INTER_SAVE = "Save"
-
-
     const val REWARDED_FEATURE = "Feature"
 
+    const val NATIVE_LANGUAGE = "Language"
+    const val NATIVE_HOME = "Home"
 }

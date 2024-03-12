@@ -1,4 +1,4 @@
-package com.hypersoft.admobadsbeta.ads.ui
+package com.hypersoft.admobadsbeta.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import com.hypersoft.admobadsbeta.ads.banners.BannerAdsConfig
 import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.interstitial.InterstitialAdsConfig
 import com.hypersoft.admobadsbeta.ads.interstitial.callbacks.InterstitialOnShowCallBack
+import com.hypersoft.admobadsbeta.ads.natives.NativeAdsConfig
 import com.hypersoft.admobadsbeta.ads.utils.AdsType
 
 class MainActivity : AppCompatActivity() {
@@ -18,19 +19,25 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val bannerAdsConfig by lazy { BannerAdsConfig() }
+        val nativeAdsConfig by lazy { NativeAdsConfig() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loadBanner()
+        //loadBanner()
+        loadNative()
 
         //findViewById<MaterialButton>(R.id.mb_call).setOnClickListener { loadInter() }
         findViewById<MaterialButton>(R.id.mb_call).setOnClickListener {
             startActivity(Intent(this, ActivitySecond::class.java))
             //finish()
         }
+    }
+
+    private fun loadNative() {
+        nativeAdsConfig.loadNativeAd(activity = this, adType = AdsType.NATIVE_LANGUAGE, viewGroup = findViewById(R.id.fl_container))
     }
 
     private fun loadBanner() {

@@ -139,6 +139,8 @@ abstract class InterstitialRepository {
             return
         }
 
+        Log.d("AdsInformation", "$adType -> showInterstitial: showing ad")
+
         mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 Log.d("AdsInformation", "admob Interstitial onAdDismissedFullScreenContent")

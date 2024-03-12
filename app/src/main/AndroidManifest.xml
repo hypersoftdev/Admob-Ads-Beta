@@ -13,10 +13,10 @@
         android:theme="@style/Theme.AdmobAdsBeta"
         tools:targetApi="31">
         <activity
-            android:name=".ads.ui.ActivitySecond"
+            android:name=".ui.ActivitySecond"
             android:exported="false" />
         <activity
-            android:name=".ads.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

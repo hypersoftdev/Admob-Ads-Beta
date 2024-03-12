@@ -6,7 +6,7 @@ import android.app.Activity
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import com.hypersoft.admobadsbeta.R
-import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerOnLoadCallBack
+import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerCallBack
 import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.banners.repository.BannerCollapsibleBottomRepository
 import com.hypersoft.admobadsbeta.ads.banners.repository.BannerCollapsibleTopRepository
@@ -30,7 +30,7 @@ class BannerAdsConfig : BannerRepository() {
     private val bannerCollapsibleTopRepository by lazy { BannerCollapsibleTopRepository() }
     private val bannerCollapsibleBottomRepository by lazy { BannerCollapsibleBottomRepository() }
 
-    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup, listener: BannerOnLoadCallBack? = null) {
+    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup, listener: BannerCallBack? = null) {
         var bannerId = ""
         var isRemoteEnable = false
 

@@ -161,6 +161,8 @@ abstract class RewardedInterRepository {
                 listener?.onAdImpression()
             }
         }
+
+        Log.d("AdsInformation", "$adType -> RewardedInter: showing ad")
         mRewardedInterstitialAd?.show(activity) {
             Log.d("AdsInformation", "admob RewardedInter onUserEarnedReward")
             listener?.onUserEarnedReward()

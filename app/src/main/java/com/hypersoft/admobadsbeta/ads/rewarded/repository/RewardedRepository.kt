@@ -161,6 +161,8 @@ abstract class RewardedRepository {
                 listener?.onAdImpression()
             }
         }
+
+        Log.d("AdsInformation", "$adType -> Rewarded: showing ad")
         mRewardedAd?.show(activity) {
             Log.d("AdsInformation", "admob Rewarded onUserEarnedReward")
             listener?.onUserEarnedReward()

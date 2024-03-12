@@ -15,7 +15,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerOnLoadCallBack
+import com.hypersoft.admobadsbeta.ads.banners.callbacks.BannerCallBack
 import com.hypersoft.admobadsbeta.ads.banners.models.BannerResponse
 
 /**
@@ -31,10 +31,9 @@ abstract class BannerRepository {
     private var mActivity: Activity? = null
     private var mAdType: String = ""
     private var mBannerId: String = ""
-    private var isAdEnable = true
     private var isAppPurchased = false
     private var isInternetConnected = false
-    private var listener: BannerOnLoadCallBack? = null
+    private var listener: BannerCallBack? = null
 
     private var mAdView: AdView? = null
     private var usingAdView: AdView? = null
@@ -52,12 +51,11 @@ abstract class BannerRepository {
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
         viewGroup: ViewGroup,
-        listener: BannerOnLoadCallBack?,
+        listener: BannerCallBack?,
     ) {
         this.mActivity = activity
         this.mAdType = adType
         this.mBannerId = bannerId
-        this.isAdEnable = isAdEnable
         this.isAppPurchased = isAppPurchased
         this.isInternetConnected = isInternetConnected
         this.listener = listener
@@ -118,7 +116,7 @@ abstract class BannerRepository {
 
         if (adView == null) {
             // load ad for new Item
-            val bannerResponse = BannerResponse(adType = adType, adView = null, viewGroup = viewGroup)
+            val bannerResponse = BannerResponse(adType = adType, adView = null, isAdEnable = isAdEnable, viewGroup = viewGroup)
             requestList.add(bannerResponse)
 
             // check if already loading
@@ -137,13 +135,13 @@ abstract class BannerRepository {
                 }
             }
         } else {
-            val bannerResponse = BannerResponse(adType = adType, adView = adView, viewGroup = viewGroup)
+            val bannerResponse = BannerResponse(adType = adType, adView = adView, isAdEnable = isAdEnable, viewGroup = viewGroup)
             requestList.add(bannerResponse)
             showBanner(bannerResponse)
         }
     }
 
-    private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerOnLoadCallBack?) {
+    private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerCallBack?) {
         isBannerLoading = true
 
         val adRequest = AdRequest.Builder().build()
@@ -157,7 +155,7 @@ abstract class BannerRepository {
         adView.loadAd(adRequest)
     }
 
-    private fun getListener(adType: String, adView: AdView, listener: BannerOnLoadCallBack?): AdListener {
+    private fun getListener(adType: String, adView: AdView, listener: BannerCallBack?): AdListener {
         return object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()
@@ -210,6 +208,7 @@ abstract class BannerRepository {
             return
         }
 
+        Log.d("AdsInformation", "${bannerResponse.adType} -> showBanner: showing ad")
         bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
         impressionList.add(requestList.removeLast())
     }
@@ -225,7 +224,7 @@ abstract class BannerRepository {
                 activity = mActivity,
                 adType = it.adType,
                 bannerId = mBannerId,
-                isAdEnable = isAdEnable,
+                isAdEnable = it.isAdEnable,
                 isAppPurchased = isAppPurchased,
                 isInternetConnected = isInternetConnected,
                 viewGroup = it.viewGroup,

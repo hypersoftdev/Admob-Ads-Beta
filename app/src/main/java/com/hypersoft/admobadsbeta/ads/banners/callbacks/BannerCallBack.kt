@@ -8,7 +8,7 @@ package com.hypersoft.admobadsbeta.ads.banners.callbacks
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
-interface BannerOnLoadCallBack {
+interface BannerCallBack {
     fun onResponse(successfullyLoaded: Boolean) {}
     fun onAdClosed() {}
     fun onAdOpened() {}
