@@ -217,7 +217,9 @@ class BannerCollapsibleTopRepository {
         }
 
         bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
-        impressionList.add(requestList.removeLast())
+        if (requestList.isNotEmpty()) {
+            impressionList.add(requestList.removeLast())
+        }
     }
 
     private fun checkIfThereIsAnymoreToLoad() {

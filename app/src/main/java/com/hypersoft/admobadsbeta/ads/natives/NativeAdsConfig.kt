@@ -24,7 +24,7 @@ class NativeAdsConfig : NativeRepository() {
 
     private val diComponent by lazy { DiComponent() }
 
-    fun loadNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup, listener: NativeCallBack? = null) {
+    fun loadNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: NativeCallBack? = null) {
         var nativeId = ""
         var nativeType = NativeType.NATIVE_MEDIUM_SMART
         var isRemoteEnable = false
@@ -33,13 +33,13 @@ class NativeAdsConfig : NativeRepository() {
             AdsType.NATIVE_LANGUAGE -> {
                 nativeId = activity.getResString(R.string.admob_native_id)
                 isRemoteEnable = diComponent.rcvNativeLanguage == 1
-                nativeType = NativeType.NATIVE_BANNER
+                nativeType = NativeType.NATIVE_MEDIUM_OLD_SMART
             }
 
             AdsType.NATIVE_HOME -> {
                 nativeId = activity.getResString(R.string.admob_native_id)
                 isRemoteEnable = diComponent.rcvNativeHome == 1
-                nativeType = NativeType.NATIVE_BANNER_SMART
+                nativeType = NativeType.NATIVE_MEDIUM_SMART
             }
         }
 

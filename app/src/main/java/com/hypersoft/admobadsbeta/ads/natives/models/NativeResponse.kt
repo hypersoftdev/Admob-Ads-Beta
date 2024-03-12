@@ -17,5 +17,5 @@ data class NativeResponse(
     var nativeType: NativeType,
     var isAdEnable: Boolean,
     var nativeAd: NativeAd?,
-    var viewGroup: ViewGroup
+    var viewGroup: ViewGroup?
 )

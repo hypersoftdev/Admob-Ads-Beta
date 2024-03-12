@@ -60,7 +60,7 @@ abstract class NativeRepository {
         isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
-        viewGroup: ViewGroup,
+        viewGroup: ViewGroup?,
         listener: NativeCallBack?,
     ) {
         this.mActivity = activity
@@ -135,7 +135,7 @@ abstract class NativeRepository {
                 Log.d("AdsInformation", "$adType -> loadNative: Requesting admob server for ad...")
 
                 // make a new call to load a ad
-                viewGroup.visibility = View.VISIBLE
+                viewGroup?.visibility = View.VISIBLE
                 loadAd(activity, nativeId, adType, listener)
             } else {
 
@@ -204,25 +204,29 @@ abstract class NativeRepository {
     }
 
     protected fun populateNative(nativeResponse: NativeResponse) {
+        if (nativeResponse.viewGroup == null) {
+            Log.d("AdsInformation", "${nativeResponse.adType} -> showNative: Preload available, no view found to show")
+            return
+        }
         if (isAppPurchased) {
             Log.e("AdsInformation", "${nativeResponse.adType} -> showNative: Premium user")
-            nativeResponse.viewGroup.removeAllViews()
-            nativeResponse.viewGroup.visibility = View.GONE
+            nativeResponse.viewGroup?.removeAllViews()
+            nativeResponse.viewGroup?.visibility = View.GONE
             return
         }
 
         if (mActivity == null) {
             Log.e("AdsInformation", "${nativeResponse.adType} -> showNative: activity reference is null")
-            nativeResponse.viewGroup.removeAllViews()
-            nativeResponse.viewGroup.visibility = View.GONE
+            nativeResponse.viewGroup?.removeAllViews()
+            nativeResponse.viewGroup?.visibility = View.GONE
             return
         }
 
         val nativeAd = nativeResponse.nativeAd
         if (nativeAd == null) {
             Log.e("AdsInformation", "${nativeResponse.adType} -> showNative: Ad is null")
-            nativeResponse.viewGroup.removeAllViews()
-            nativeResponse.viewGroup.visibility = View.GONE
+            nativeResponse.viewGroup?.removeAllViews()
+            nativeResponse.viewGroup?.visibility = View.GONE
             return
         }
 
@@ -279,16 +283,19 @@ abstract class NativeRepository {
         ifvIcon.isVisible = nativeAd.icon?.drawable != null
         mbAction.isVisible = nativeAd.callToAction.isNullOrEmpty().not()
 
-        nativeResponse.viewGroup.visibility = View.VISIBLE
-        nativeResponse.viewGroup.addCleanView(nativeAdView)
+        nativeResponse.viewGroup?.visibility = View.VISIBLE
+        nativeResponse.viewGroup?.addCleanView(nativeAdView)
+        nativeAdView.setNativeAd(nativeAd)
 
         // Added to impressionList
-        impressionList.add(requestList.removeLast())
+        if (requestList.isNotEmpty()) {
+            impressionList.add(requestList.removeLast())
+        }
     }
 
     private fun checkIfThereIsAnymoreToLoad() {
-        val bannerResponse = requestList.lastOrNull()
-        bannerResponse?.let {
+        val nativeResponse = requestList.lastOrNull()
+        nativeResponse?.let {
             // No need to load ad, if adType is same on top.
             if (mAdType == it.adType) return
 
@@ -313,7 +320,7 @@ abstract class NativeRepository {
         view?.let { this.addView(it) }
     }
 
-    protected fun onDestroy(adType: String) {
+    fun onDestroy(adType: String) {
         impressionList.find { it.adType == adType }?.let { node ->
             if (usingNativeAd == node.nativeAd) {
                 usingNativeAd = null
@@ -322,7 +329,7 @@ abstract class NativeRepository {
             Log.d("AdsInformation", "$adType -> loadNative: onDestroy")
 
             node.nativeAd?.destroy()
-            node.viewGroup.removeAllViews()
+            node.viewGroup?.removeAllViews()
             impressionList.remove(node)
         }
         requestList.find { it.adType == adType }?.let { node ->
@@ -334,7 +341,7 @@ abstract class NativeRepository {
             Log.d("AdsInformation", "$adType -> loadNative: onDestroy")
 
             node.nativeAd?.destroy()
-            node.viewGroup.removeAllViews()
+            node.viewGroup?.removeAllViews()
             requestList.remove(node)
         }
     }

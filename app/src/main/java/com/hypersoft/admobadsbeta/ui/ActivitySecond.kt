@@ -7,6 +7,7 @@ import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.ui.MainActivity.Companion.bannerAdsConfig
 import com.hypersoft.admobadsbeta.ads.banners.enums.BannerType
 import com.hypersoft.admobadsbeta.ads.utils.AdsType
+import com.hypersoft.admobadsbeta.ui.MainActivity.Companion.nativeAdsConfig
 
 class ActivitySecond : AppCompatActivity() {
 
@@ -21,7 +22,7 @@ class ActivitySecond : AppCompatActivity() {
     }
 
     private fun loadNative() {
-        MainActivity.nativeAdsConfig.loadNativeAd(activity = this, adType = AdsType.NATIVE_LANGUAGE, viewGroup = findViewById(R.id.fl_container))
+        nativeAdsConfig.loadNativeAd(activity = this, adType = AdsType.NATIVE_HOME, viewGroup = findViewById(R.id.fl_container))
     }
 
     private fun loadBanner() {
@@ -31,5 +32,6 @@ class ActivitySecond : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bannerAdsConfig.onDestroy(AdsType.BANNER_GALLERY, bannerType = BannerType.MEDIUM_RECTANGLE)
+        nativeAdsConfig.onDestroy(AdsType.NATIVE_HOME)
     }
 }

@@ -210,7 +210,9 @@ abstract class BannerRepository {
 
         Log.d("AdsInformation", "${bannerResponse.adType} -> showBanner: showing ad")
         bannerResponse.viewGroup.addCleanView(bannerResponse.adView)
-        impressionList.add(requestList.removeLast())
+        if (requestList.isNotEmpty()) {
+            impressionList.add(requestList.removeLast())
+        }
     }
 
     private fun checkIfThereIsAnymoreToLoad() {
