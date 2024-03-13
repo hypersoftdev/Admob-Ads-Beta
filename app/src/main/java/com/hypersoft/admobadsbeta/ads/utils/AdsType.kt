@@ -10,14 +10,21 @@ package com.hypersoft.admobadsbeta.ads.utils
 
 object AdsType {
 
-    const val BANNER_HOME = "Home"
-    const val BANNER_GALLERY = "Gallery"
+    const val BANNER_ONE = "BANNER_ONE"
+    const val BANNER_TWO = "BANNER_TWO"
+    const val BANNER_THREE = "BANNER_THREE"
+    const val BANNER_FOUR = "BANNER_FOUR"
 
     const val INTER_SPLASH = "Splash"
     const val INTER_HOME = "Home"
     const val INTER_SAVE = "Save"
     const val REWARDED_FEATURE = "Feature"
 
-    const val NATIVE_LANGUAGE = "Language"
-    const val NATIVE_HOME = "Home"
+    const val NATIVE_ONE = "NATIVE_ONE"
+    const val NATIVE_TWO = "NATIVE_TWO"
+    const val NATIVE_THREE = "NATIVE_THREE"
+    const val NATIVE_FOUR = "NATIVE_FOUR"
+    const val NATIVE_FIVE = "NATIVE_FIVE"
+    const val NATIVE_SIX = "NATIVE_SIX"
+    const val NATIVE_SEVEN = "NATIVE_SEVEN"
 }

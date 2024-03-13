@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,15 +13,46 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AdmobAdsBeta"
         tools:targetApi="31">
+
+        <!-- ________________ Interstitials ________________ -->
         <activity
-            android:name=".ui.ActivitySecond"
+            android:name=".ui.interstitials.ActivityInterstitials"
             android:exported="false" />
+
+        <!-- ________________ Native ________________ -->
+        <activity
+            android:name=".ui.natives.ActivityNativeFour"
+            android:exported="false" />
+        <activity
+            android:name=".ui.natives.ActivityNativeThree"
+            android:exported="false" />
+        <activity
+            android:name=".ui.natives.ActivityNativeTwo"
+            android:exported="false" />
+        <activity
+            android:name=".ui.natives.ActivityNativeOne"
+            android:exported="false" />
+
+        <!-- ________________ Banner ________________ -->
+        <activity
+            android:name=".ui.banners.ActivityBannerFour"
+            android:exported="false" />
+        <activity
+            android:name=".ui.banners.ActivityBannerThree"
+            android:exported="false" />
+        <activity
+            android:name=".ui.banners.ActivityBannerTwo"
+            android:exported="false" />
+        <activity
+            android:name=".ui.banners.ActivityBannerOne"
+            android:exported="false" />
+
+        <!-- ________________ Other ________________ -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,6 +60,12 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
+            android:value="true" />
     </application>
 
 </manifest>

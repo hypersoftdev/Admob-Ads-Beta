@@ -46,6 +46,7 @@ class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepos
             adEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
+            canRequestAdsConsent = diComponent.canRequestAdsConsent,
             listener = listener
         )
     }

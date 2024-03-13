@@ -46,6 +46,7 @@ class RewardedAdsConfig(private val context: Context?) : RewardedRepository() {
             adEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
+            canRequestAdsConsent = diComponent.canRequestAdsConsent,
             listener = listener
         )
     }

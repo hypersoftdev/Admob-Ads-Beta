@@ -34,6 +34,7 @@ abstract class InterstitialRepository {
         adEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        canRequestAdsConsent: Boolean,
         listener: InterstitialOnLoadCallBack?,
     ) {
 
@@ -64,6 +65,12 @@ abstract class InterstitialRepository {
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Internet is not connected")
+            listener?.onResponse()
+            return
+        }
+
+        if (canRequestAdsConsent.not()) {
+            Log.e("AdsInformation", "$adType -> loadBanner: Consent not permitted for ad calls")
             listener?.onResponse()
             return
         }

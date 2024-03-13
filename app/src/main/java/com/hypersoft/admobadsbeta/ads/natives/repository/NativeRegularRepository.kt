@@ -49,6 +49,7 @@ class NativeRegularRepository {
         isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        canRequestAdsConsent: Boolean,
         viewGroup: ViewGroup,
         listener: NativeCallBack?,
     ) {
@@ -68,6 +69,12 @@ class NativeRegularRepository {
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadAndShowNative: Internet is not connected")
+            listener?.onResponse(false)
+            return
+        }
+
+        if (canRequestAdsConsent.not()) {
+            Log.e("AdsInformation", "$adType -> loadNative: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }
@@ -105,7 +112,7 @@ class NativeRegularRepository {
                 .setMediaAspectRatio(NativeAdOptions.NATIVE_MEDIA_ASPECT_RATIO_LANDSCAPE)
                 .build()
 
-            AdLoader.Builder(activity, nativeId)
+            AdLoader.Builder(activity, nativeId.trim())
                 .forNativeAd { populateNative(adType, it) }
                 .withAdListener(getListener(adType, listener))
                 .withNativeAdOptions(nativeAdOptions)

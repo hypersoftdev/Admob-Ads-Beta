@@ -32,6 +32,7 @@ abstract class RewardedInterRepository {
         adEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        canRequestAdsConsent: Boolean,
         listener: RewardedOnLoadCallBack?,
     ) {
 
@@ -62,6 +63,12 @@ abstract class RewardedInterRepository {
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadRewardedInter: Internet is not connected")
+            listener?.onResponse(false)
+            return
+        }
+
+        if (canRequestAdsConsent.not()) {
+            Log.e("AdsInformation", "$adType -> loadBanner: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }

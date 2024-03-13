@@ -78,4 +78,5 @@ dependencies {
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.play.services.ads
+    implementation libs.androidx.lifecycle.process
 }

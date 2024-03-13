@@ -27,23 +27,9 @@ class NativeAdsConfig : NativeRepository() {
     private val nativeRegularRepository by lazy { NativeRegularRepository() }
 
     fun loadNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: NativeCallBack? = null) {
-        var nativeId = ""
-        var nativeType = NativeType.NATIVE_MEDIUM_SMART
-        var isRemoteEnable = false
-
-        when (adType) {
-            AdsType.NATIVE_LANGUAGE -> {
-                nativeId = activity.getResString(R.string.admob_native_id)
-                isRemoteEnable = diComponent.rcvNativeLanguage == 1
-                nativeType = NativeType.NATIVE_MEDIUM_OLD_SMART
-            }
-
-            AdsType.NATIVE_HOME -> {
-                nativeId = activity.getResString(R.string.admob_native_id)
-                isRemoteEnable = diComponent.rcvNativeHome == 1
-                nativeType = NativeType.NATIVE_MEDIUM_SMART
-            }
-        }
+        val nativeId = getNativeId(activity, adType)
+        val isRemoteEnable = getRemoteEnable(adType)
+        val nativeType = getNativeType(adType)
 
         loadNative(
             activity = activity,
@@ -53,29 +39,16 @@ class NativeAdsConfig : NativeRepository() {
             isAdEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
+            canRequestAdsConsent = diComponent.canRequestAdsConsent,
             viewGroup = viewGroup,
             listener = listener
         )
     }
 
     fun loadAndShowNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup, listener: NativeCallBack? = null) {
-        var nativeId = ""
-        var nativeType = NativeType.NATIVE_MEDIUM_SMART
-        var isRemoteEnable = false
-
-        when (adType) {
-            AdsType.NATIVE_LANGUAGE -> {
-                nativeId = activity.getResString(R.string.admob_native_id)
-                isRemoteEnable = diComponent.rcvNativeLanguage == 1
-                nativeType = NativeType.NATIVE_MEDIUM_OLD_SMART
-            }
-
-            AdsType.NATIVE_HOME -> {
-                nativeId = activity.getResString(R.string.admob_native_id)
-                isRemoteEnable = diComponent.rcvNativeHome == 1
-                nativeType = NativeType.NATIVE_MEDIUM_SMART
-            }
-        }
+        val nativeId = getNativeId(activity, adType)
+        val isRemoteEnable = getRemoteEnable(adType)
+        val nativeType = getNativeType(adType)
 
         nativeRegularRepository.loadAndShowNative(
             activity = activity,
@@ -85,9 +58,49 @@ class NativeAdsConfig : NativeRepository() {
             isAdEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
+            canRequestAdsConsent = diComponent.canRequestAdsConsent,
             viewGroup = viewGroup,
             listener = listener
         )
+    }
+
+    private fun getNativeId(activity: Activity?, adType: String): String {
+        return when (adType) {
+            AdsType.NATIVE_ONE -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_TWO -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_THREE -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_FOUR -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_FIVE -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_SIX -> activity.getResString(R.string.admob_native_id)
+            AdsType.NATIVE_SEVEN -> activity.getResString(R.string.admob_native_id)
+            else -> ""
+        }
+    }
+
+    private fun getRemoteEnable(adType: String): Boolean {
+        return when (adType) {
+            AdsType.NATIVE_ONE -> diComponent.rcvNativeOne == 1
+            AdsType.NATIVE_TWO -> diComponent.rcvNativeTwo == 1
+            AdsType.NATIVE_THREE -> diComponent.rcvNativeThree == 1
+            AdsType.NATIVE_FOUR -> diComponent.rcvNativeFour == 1
+            AdsType.NATIVE_FIVE -> diComponent.rcvNativeFive == 1
+            AdsType.NATIVE_SIX -> diComponent.rcvNativeSix == 1
+            AdsType.NATIVE_SEVEN -> diComponent.rcvNativeSeven == 1
+            else -> false
+        }
+    }
+
+    private fun getNativeType(adType: String): NativeType {
+        return when (adType) {
+            AdsType.NATIVE_ONE -> NativeType.NATIVE_BANNER_SMART
+            AdsType.NATIVE_TWO -> NativeType.NATIVE_BANNER
+            AdsType.NATIVE_THREE -> NativeType.NATIVE_MEDIUM_OLD_SMART
+            AdsType.NATIVE_FOUR -> NativeType.NATIVE_MEDIUM_OLD
+            AdsType.NATIVE_FIVE -> NativeType.NATIVE_MEDIUM_SMART
+            AdsType.NATIVE_SIX -> NativeType.NATIVE_MEDIUM
+            AdsType.NATIVE_SEVEN -> NativeType.NATIVE_LARGE
+            else -> NativeType.NATIVE_LARGE
+        }
     }
 
     private fun Activity?.getResString(@StringRes resId: Int): String {

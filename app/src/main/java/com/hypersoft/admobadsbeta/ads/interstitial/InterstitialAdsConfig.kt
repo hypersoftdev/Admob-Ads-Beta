@@ -59,6 +59,7 @@ class InterstitialAdsConfig(private val context: Context?) : InterstitialReposit
             adEnable = isRemoteEnable,
             isAppPurchased = diComponent.isAppPurchased,
             isInternetConnected = diComponent.isInternetConnected,
+            canRequestAdsConsent = diComponent.canRequestAdsConsent,
             listener = listener
         )
     }

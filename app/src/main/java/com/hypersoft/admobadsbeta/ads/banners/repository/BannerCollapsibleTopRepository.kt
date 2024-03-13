@@ -36,6 +36,7 @@ class BannerCollapsibleTopRepository {
     private var isAdEnable = true
     private var isAppPurchased = false
     private var isInternetConnected = false
+    private var canRequestAdsConsent = false
     private var listener: BannerCallBack? = null
 
     private var mAdView: AdView? = null
@@ -53,6 +54,7 @@ class BannerCollapsibleTopRepository {
         isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        canRequestAdsConsent: Boolean,
         viewGroup: ViewGroup?,
         listener: BannerCallBack?,
     ) {
@@ -62,6 +64,7 @@ class BannerCollapsibleTopRepository {
         this.isAdEnable = isAdEnable
         this.isAppPurchased = isAppPurchased
         this.isInternetConnected = isInternetConnected
+        this.canRequestAdsConsent = canRequestAdsConsent
         this.listener = listener
 
         if (isAppPurchased) {
@@ -78,6 +81,12 @@ class BannerCollapsibleTopRepository {
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Internet is not connected")
+            listener?.onResponse(false)
+            return
+        }
+
+        if (canRequestAdsConsent.not()) {
+            Log.e("AdsInformation", "$adType -> loadBanner: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }
@@ -236,6 +245,7 @@ class BannerCollapsibleTopRepository {
                 isAdEnable = isAdEnable,
                 isAppPurchased = isAppPurchased,
                 isInternetConnected = isInternetConnected,
+                canRequestAdsConsent = canRequestAdsConsent,
                 viewGroup = it.viewGroup,
                 listener = listener
             )

@@ -42,6 +42,7 @@ abstract class NativeRepository {
     private var mNativeType: NativeType = NativeType.NATIVE_MEDIUM_SMART
     private var isAppPurchased = false
     private var isInternetConnected = false
+    private var canRequestAdsConsent = false
     private var listener: NativeCallBack? = null
 
     private var mNativeAd: NativeAd? = null
@@ -60,6 +61,7 @@ abstract class NativeRepository {
         isAdEnable: Boolean,
         isAppPurchased: Boolean,
         isInternetConnected: Boolean,
+        canRequestAdsConsent: Boolean,
         viewGroup: ViewGroup?,
         listener: NativeCallBack?,
     ) {
@@ -69,6 +71,7 @@ abstract class NativeRepository {
         this.mNativeType = nativeType
         this.isAppPurchased = isAppPurchased
         this.isInternetConnected = isInternetConnected
+        this.canRequestAdsConsent = canRequestAdsConsent
         this.listener = listener
 
         if (isAppPurchased) {
@@ -85,6 +88,12 @@ abstract class NativeRepository {
 
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadNative: Internet is not connected")
+            listener?.onResponse(false)
+            return
+        }
+
+        if (canRequestAdsConsent.not()) {
+            Log.e("AdsInformation", "$adType -> loadNative: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }
@@ -162,7 +171,7 @@ abstract class NativeRepository {
                 .setMediaAspectRatio(NativeAdOptions.NATIVE_MEDIA_ASPECT_RATIO_LANDSCAPE)
                 .build()
 
-            AdLoader.Builder(activity, nativeId)
+            AdLoader.Builder(activity, nativeId.trim())
                 .forNativeAd { mNativeAd = it }
                 .withAdListener(getListener(adType, listener))
                 .withNativeAdOptions(nativeAdOptions)
@@ -308,6 +317,7 @@ abstract class NativeRepository {
                 isAdEnable = it.isAdEnable,
                 isAppPurchased = isAppPurchased,
                 isInternetConnected = isInternetConnected,
+                canRequestAdsConsent = canRequestAdsConsent,
                 viewGroup = it.viewGroup,
                 listener = listener
             )

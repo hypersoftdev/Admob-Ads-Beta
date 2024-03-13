@@ -3,4 +3,29 @@
     <string name="back">Back</string>
     <string name="ad">Ad</string>
     <string name="install">Install</string>
+
+
+    <!--MainActivity-->
+    <string name="banners">Banners</string>
+    <string name="natives">Native</string>
+
+
+    <!--Banner-->
+    <string name="next">Next</string>
+    <string name="banner_adaptive">Banner (Adaptive)</string>
+    <string name="banner_medium_rectangle">Banner (Medium Rectangle)</string>
+    <string name="banner_collapsible_top">Banner (Collapsible Top)</string>
+    <string name="banner_collapsible_bottom">Banner (Collapsible Bottom)</string>
+
+    <!--Native-->
+    <string name="native_banner">Native (Banner)</string>
+    <string name="native_banner_smart">Native (Banner Smart)</string>
+    <string name="native_medium_old">Native (Medium Old)</string>
+    <string name="native_medium_old_smart">Native (Medium Old Smart)</string>
+    <string name="native_medium">Native (Medium)</string>
+    <string name="native_medium_smart">Native (Medium Smart)</string>
+    <string name="native_large">Native (Large)</string>
+    <string name="interstitials">Interstitials</string>
+    <string name="show_interstitial">Show Interstitial</string>
+
 </resources>

@@ -30,24 +30,38 @@ class BannerAdsConfig : BannerRepository() {
     private val bannerCollapsibleTopRepository by lazy { BannerCollapsibleTopRepository() }
     private val bannerCollapsibleBottomRepository by lazy { BannerCollapsibleBottomRepository() }
 
-    fun loadBannerAd(activity: Activity?, adType: String, bannerType: BannerType, viewGroup: ViewGroup?, listener: BannerCallBack? = null) {
+    fun loadBannerAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: BannerCallBack? = null) {
         var bannerId = ""
         var isRemoteEnable = false
+        var bannerType = BannerType.ADAPTIVE
 
         when (adType) {
-            AdsType.BANNER_HOME -> {
-                //bannerId = activity.getResString(R.string.admob_banner_adaptive_id)
-                bannerId = activity.getResString(R.string.admob_banner_collapsible_id)
-                isRemoteEnable = diComponent.rcvBannerHome == 1
+            AdsType.BANNER_ONE -> {
+                bannerId = activity.getResString(R.string.admob_banner_adaptive_id)
+                isRemoteEnable = diComponent.rcvBannerOne == 1
+                bannerType = BannerType.ADAPTIVE
             }
 
-            AdsType.BANNER_GALLERY -> {
+            AdsType.BANNER_TWO -> {
                 bannerId = activity.getResString(R.string.admob_banner_medium_rectance_id)
-                isRemoteEnable = diComponent.rcvBannerGallery == 1
+                isRemoteEnable = diComponent.rcvBannerTwo == 1
+                bannerType = BannerType.MEDIUM_RECTANGLE
+            }
+
+            AdsType.BANNER_THREE -> {
+                bannerId = activity.getResString(R.string.admob_banner_collapsible_id)
+                isRemoteEnable = diComponent.rcvBannerThree == 1
+                bannerType = BannerType.COLLAPSIBLE_BOTTOM
+            }
+
+            AdsType.BANNER_FOUR -> {
+                bannerId = activity.getResString(R.string.admob_banner_collapsible_id)
+                isRemoteEnable = diComponent.rcvBannerFour == 1
+                bannerType = BannerType.COLLAPSIBLE_TOP
             }
         }
 
-        when(bannerType) {
+        when (bannerType) {
             BannerType.ADAPTIVE -> {
                 loadBanner(
                     activity = activity,
@@ -56,10 +70,12 @@ class BannerAdsConfig : BannerRepository() {
                     isAdEnable = isRemoteEnable,
                     isAppPurchased = diComponent.isAppPurchased,
                     isInternetConnected = diComponent.isInternetConnected,
+                    canRequestAdsConsent = diComponent.canRequestAdsConsent,
                     viewGroup = viewGroup,
                     listener = listener
                 )
             }
+
             BannerType.MEDIUM_RECTANGLE -> {
                 bannerMediumRepository.loadBanner(
                     activity = activity,
@@ -68,10 +84,12 @@ class BannerAdsConfig : BannerRepository() {
                     isAdEnable = isRemoteEnable,
                     isAppPurchased = diComponent.isAppPurchased,
                     isInternetConnected = diComponent.isInternetConnected,
+                    canRequestAdsConsent = diComponent.canRequestAdsConsent,
                     viewGroup = viewGroup,
                     listener = listener
                 )
             }
+
             BannerType.COLLAPSIBLE_TOP -> {
                 bannerCollapsibleTopRepository.loadBanner(
                     activity = activity,
@@ -80,10 +98,12 @@ class BannerAdsConfig : BannerRepository() {
                     isAdEnable = isRemoteEnable,
                     isAppPurchased = diComponent.isAppPurchased,
                     isInternetConnected = diComponent.isInternetConnected,
+                    canRequestAdsConsent = diComponent.canRequestAdsConsent,
                     viewGroup = viewGroup,
                     listener = listener
                 )
             }
+
             BannerType.COLLAPSIBLE_BOTTOM -> {
                 bannerCollapsibleBottomRepository.loadBanner(
                     activity = activity,
@@ -92,6 +112,7 @@ class BannerAdsConfig : BannerRepository() {
                     isAdEnable = isRemoteEnable,
                     isAppPurchased = diComponent.isAppPurchased,
                     isInternetConnected = diComponent.isInternetConnected,
+                    canRequestAdsConsent = diComponent.canRequestAdsConsent,
                     viewGroup = viewGroup,
                     listener = listener
                 )
@@ -99,8 +120,16 @@ class BannerAdsConfig : BannerRepository() {
         }
     }
 
-    fun onDestroy(adType: String, bannerType: BannerType) {
-        when(bannerType) {
+    fun destroyBanner(adType: String) {
+        var bannerType = BannerType.ADAPTIVE
+        when (adType) {
+            AdsType.BANNER_ONE -> bannerType = BannerType.ADAPTIVE
+            AdsType.BANNER_TWO -> bannerType = BannerType.MEDIUM_RECTANGLE
+            AdsType.BANNER_THREE -> bannerType = BannerType.COLLAPSIBLE_BOTTOM
+            AdsType.BANNER_FOUR -> bannerType = BannerType.COLLAPSIBLE_TOP
+        }
+
+        when (bannerType) {
             BannerType.ADAPTIVE -> onDestroy(adType)
             BannerType.MEDIUM_RECTANGLE -> bannerMediumRepository.onDestroy(adType)
             BannerType.COLLAPSIBLE_TOP -> bannerCollapsibleTopRepository.onDestroy(adType)
