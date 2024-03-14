@@ -13,12 +13,51 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            resValue "string", "admob_app_id", "ca-app-pub-3940256099942544~3347511713"
+
+            // AppOpen
+            resValue "string", "admob_app_open_id", "ca-app-pub-3940256099942544/9257395921"
+
+            // Banner
+            resValue "string", "admob_banner_adaptive_id", "ca-app-pub-3940256099942544/9214589741"
+            resValue "string", "admob_banner_medium_rectance_id", "ca-app-pub-3940256099942544/6300978111"
+            resValue "string", "admob_banner_collapsible_id", "ca-app-pub-3940256099942544/2014213617"
+
+            // Inter
+            resValue "string", "admob_inter_id", "ca-app-pub-3940256099942544/1033173712"
+            resValue "string", "admob_rewarded_id", "ca-app-pub-3940256099942544/5224354917"
+            resValue "string", "admob_rewarded_inter_id", "ca-app-pub-3940256099942544/5354046379"
+
+            // Native
+            resValue "string", "admob_native_id", "ca-app-pub-3940256099942544/2247696110"
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
+            resValue "string", "admob_app_id", "ca-app-pub-3940256099942544~3347511713"
+
+            // AppOpen
+            resValue "string", "admob_app_open_id", "ca-app-pub-3940256099942544/9257395921"
+
+            // Banner
+            resValue "string", "admob_banner_adaptive_id", "ca-app-pub-3940256099942544/9214589741"
+            resValue "string", "admob_banner_medium_rectance_id", "ca-app-pub-3940256099942544/6300978111"
+            resValue "string", "admob_banner_collapsible_id", "ca-app-pub-3940256099942544/2014213617"
+
+            // Inter
+            resValue "string", "admob_inter_id", "ca-app-pub-3940256099942544/1033173712"
+            resValue "string", "admob_rewarded_id", "ca-app-pub-3940256099942544/5224354917"
+            resValue "string", "admob_rewarded_inter_id", "ca-app-pub-3940256099942544/5354046379"
+
+            // Native
+            resValue "string", "admob_native_id", "ca-app-pub-3940256099942544/2247696110"
+
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -33,13 +72,11 @@ android {
 }
 
 dependencies {
-
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.junit
-    androidTestImplementation libs.androidx.espresso.core
+    implementation libs.play.services.ads
+    implementation libs.androidx.lifecycle.process
 }
