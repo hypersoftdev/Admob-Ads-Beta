@@ -10,13 +10,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_rounded_container">
+        android:background="@drawable/ads_bg_rounded_container">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ad_attribute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_corner"
+            android:background="@drawable/ads_bg_corner"
             android:includeFontPadding="false"
             android:padding="4dp"
             android:text="@string/ad"
