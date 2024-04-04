@@ -246,27 +246,6 @@ class BannerMediumRepository {
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun getAdSize(activity: Activity): AdSize? {
-        val density = activity.resources.displayMetrics.density
-
-        val adWidthPixels = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowManager = activity.getSystemService<WindowManager>()
-            val bounds = windowManager?.currentWindowMetrics?.bounds
-            bounds?.width()?.toFloat()
-        } else {
-            val display: Display? = activity.getSystemService<DisplayManager>()?.getDisplay(Display.DEFAULT_DISPLAY)
-            val outMetrics = DisplayMetrics()
-            display?.getMetrics(outMetrics)
-            outMetrics.widthPixels.toFloat()
-        }
-        if (adWidthPixels == null) {
-            return null
-        }
-        val adWidth = (adWidthPixels / density).toInt()
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, adWidth)
-    }
-
     private fun ViewGroup.addCleanView(view: View?) {
         (view?.parent as? ViewGroup)?.removeView(view)
         this.removeAllViews()
