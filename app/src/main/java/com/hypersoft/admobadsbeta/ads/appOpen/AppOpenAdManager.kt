@@ -16,6 +16,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
 import com.hypersoft.admobadsbeta.MainApplication
+import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.di.DiComponent
 import java.util.Date
 
@@ -74,14 +75,8 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
 
     /* --------------------------------------- Load & Show --------------------------------------- */
 
-    private var appOpenId = ""
-    private var remoteConfigValue = 0
+    private val appOpenId by lazy { mainApplication.getString(R.string.admob_app_open_id) }
     var dismissCallback: (() -> Unit)? = null
-
-    fun setValues(appOpenId: String, remoteConfigValue: Int) {
-        this.appOpenId = appOpenId
-        this.remoteConfigValue = remoteConfigValue
-    }
 
     fun loadAppOpen() {
         if (isAdAvailable()) {
@@ -109,7 +104,7 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
             return
         }
 
-        if (remoteConfigValue != 1) {
+        if (diComponent.rcvAppOpen != 1) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Remote Configuration: Ad is off")
             return
         }

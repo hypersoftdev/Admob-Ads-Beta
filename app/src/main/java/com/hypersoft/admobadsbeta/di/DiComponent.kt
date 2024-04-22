@@ -14,6 +14,8 @@ class DiComponent {
     val isAppPurchased = false
     val canRequestAdsConsent = true
 
+    val rcvAppOpen = 1
+
     val rcvBannerOne = 1
     val rcvBannerTwo = 1
     val rcvBannerThree = 1
