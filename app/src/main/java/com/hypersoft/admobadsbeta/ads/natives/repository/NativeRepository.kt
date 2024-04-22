@@ -181,13 +181,15 @@ abstract class NativeRepository {
     }
 
     private fun getListener(adType: String, listener: NativeCallBack?): AdListener {
+        var currentAdType = adType
         return object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                Log.i("AdsInformation", "$adType -> loadNative: onAdLoaded")
+                Log.i("AdsInformation", "$currentAdType -> loadNative: onAdLoaded")
 
                 requestList.lastOrNull()?.let {
                     it.nativeAd = mNativeAd
+                    currentAdType = it.adType
                     populateNative(it)
                 }
                 isNativeLoading = false
@@ -196,7 +198,7 @@ abstract class NativeRepository {
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 super.onAdFailedToLoad(adError)
-                Log.e("AdsInformation", "$adType -> loadNative: onAdFailedToLoad: ${adError.message}")
+                Log.e("AdsInformation", "$currentAdType -> loadNative: onAdFailedToLoad: ${adError.message}")
                 mNativeAd = null
                 isNativeLoading = false
                 checkIfThereIsAnymoreToLoad()
@@ -205,7 +207,7 @@ abstract class NativeRepository {
 
             override fun onAdImpression() {
                 super.onAdImpression()
-                Log.d("AdsInformation", "$adType -> loadNative: onAdImpression")
+                Log.d("AdsInformation", "$currentAdType -> loadNative: onAdImpression")
                 mNativeAd = null
                 checkIfThereIsAnymoreToLoad()
             }
@@ -331,6 +333,7 @@ abstract class NativeRepository {
     }
 
     fun onDestroy(adType: String) {
+        Log.d("AdsInformation", "$adType -> NativeRepository: Request generated for destruction...")
         impressionList.find { it.adType == adType }?.let { node ->
             if (usingNativeAd == node.nativeAd) {
                 usingNativeAd = null
@@ -346,7 +349,7 @@ abstract class NativeRepository {
             val existingResponse = deleteList.find { it.adType == adType }
             if (existingResponse != null) {
                 deleteList.remove(existingResponse)
-                return
+                //return
             }
             Log.d("AdsInformation", "$adType -> loadNative: onDestroy")
 
