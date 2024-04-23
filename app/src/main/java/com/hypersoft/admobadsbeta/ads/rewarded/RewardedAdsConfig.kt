@@ -21,17 +21,27 @@ import com.hypersoft.admobadsbeta.di.DiComponent
  */
 
 /**
- * @param context: Can be of application class
+ * Configurations and methods for managing rewarded ads.
+ *
+ * @param context The context, which can be an application class.
  */
 
 class RewardedAdsConfig(private val context: Context?) : RewardedRepository() {
 
+    // Lazy initialization of DI component
     private val diComponent by lazy { DiComponent() }
 
+    /**
+     * Loads a rewarded ad.
+     *
+     * @param adType The type of rewarded ad to load.
+     * @param listener Callback to handle load events.
+     */
     fun loadRewardedAd(adType: String, listener: RewardedOnLoadCallBack? = null) {
         var interAdId = ""
         var isRemoteEnable = false
 
+        // Determine ad ID and remote enable status based on ad type
         when (adType) {
             REWARDED_FEATURE -> {
                 interAdId = getResString(R.string.admob_rewarded_id)
@@ -39,6 +49,7 @@ class RewardedAdsConfig(private val context: Context?) : RewardedRepository() {
             }
         }
 
+        // Load the rewarded ad
         loadRewarded(
             context = context,
             adType = adType,
@@ -51,6 +62,13 @@ class RewardedAdsConfig(private val context: Context?) : RewardedRepository() {
         )
     }
 
+    /**
+     * Shows a rewarded ad.
+     *
+     * @param activity The activity where the ad will be shown.
+     * @param adType The type of rewarded ad to show.
+     * @param listener Callback to handle show events.
+     */
     fun showRewardedAd(activity: Activity?, adType: String, listener: RewardedOnShowCallBack? = null) {
         showRewarded(
             activity = activity,
@@ -60,6 +78,12 @@ class RewardedAdsConfig(private val context: Context?) : RewardedRepository() {
         )
     }
 
+    /**
+     * Retrieves string resource by ID.
+     *
+     * @param resId The resource ID.
+     * @return The string value of the resource.
+     */
     private fun getResString(@StringRes resId: Int): String {
         return context?.resources?.getString(resId) ?: ""
     }
