@@ -22,12 +22,6 @@ class MainApplication : Application() {
 
     private fun initAppOpen() {
         appOpenAdManager = AppOpenAdManager(this)
-
-        // After fetching Remote-Config
-        appOpenAdManager.setValues(
-            appOpenId = resources.getString(R.string.admob_app_open_id),
-            remoteConfigValue = 1,
-        )
         appOpenAdManager.loadAppOpen()
     }
 

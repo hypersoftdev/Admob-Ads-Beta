@@ -28,21 +28,37 @@ import java.util.Date
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+
+/**
+ * Class responsible for managing App Open Ads in the application.
+ * This class implements Application.ActivityLifecycleCallbacks to track the lifecycle of activities.
+ *
+ * @property mainApplication The instance of the main application.
+ */
 class AppOpenAdManager(private val mainApplication: MainApplication) : Application.ActivityLifecycleCallbacks {
 
+    // Dependency Injection Component
     private val diComponent = DiComponent()
 
+    // Current activity reference
     private var currentActivity: Activity? = null
+
+    // App Open Ad instance
     private var appOpenAd: AppOpenAd? = null
 
+    // Timestamp for when the ad was loaded
     private var loadTime = 0L
 
+    // Flags to manage ad state
     private var isShowingAd = false
     private var isLoadingAd = false
+
+    // Flag to determine if the app is in splash mode
     var isSplash = true
 
-    /* --------------------------------------- Manage --------------------------------------- */
+    /* -------------------------- Manage -------------------------- */
 
+    // Default lifecycle observer to show ad on app start
     private val defaultLifecycleObserver = object : DefaultLifecycleObserver {
         override fun onStart(owner: LifecycleOwner) {
             super.onStart(owner)
@@ -51,12 +67,15 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
         }
     }
 
+    /**
+     * Initialization block to register lifecycle callbacks.
+     */
     init {
         mainApplication.registerActivityLifecycleCallbacks(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(defaultLifecycleObserver)
     }
 
-    /* --------------------------------------- Activity LifeCycle --------------------------------------- */
+    /* -------------------------- Activity LifeCycle -------------------------- */
 
     override fun onActivityStarted(activity: Activity) {
         Log.d("AdsInformation", "OpenApp -> onActivityStarted: called")
@@ -70,49 +89,62 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
-    /* --------------------------------------- Load & Show --------------------------------------- */
+    /* -------------------------- Load & Show -------------------------- */
 
+    // Lazy initialization of App Open Ad ID
     private val appOpenId by lazy { mainApplication.getString(R.string.admob_app_open_id) }
 
+    /**
+     * Loads the App Open Ad if conditions are met.
+     */
     fun loadAppOpen() {
+        // Check if ad is already available
         if (isAdAvailable()) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Ad already available")
             return
         }
 
+        // Check if user has premium access
         if (diComponent.isAppPurchased) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: User has premium access")
             return
         }
-
+        // Check if ad loading is already in progress
         if (isLoadingAd) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Ad is already getting load")
             return
         }
 
+        // Check if Ad ID is empty
         if (appOpenId.trim().isEmpty()) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Ad Id should not be empty: $appOpenId")
             return
         }
 
+        // Check if user has provided consent to show ads
         if (diComponent.canRequestAdsConsent.not()) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Consent: cannot request ads")
             return
         }
 
-        if (diComponent.rcvAppOpen != 1) {
+        // Check if App Open Ad is enabled remotely
+        if (diComponent.rcvAppOpen == 0) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Remote Configuration: Ad is off")
             return
         }
 
+        // Check for internet connection
         if (diComponent.isInternetConnected.not()) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: No Internet connection")
             return
         }
 
+        // Set loading flag
         isLoadingAd = true
 
+        // Build Ad request
         val request = AdRequest.Builder().build()
+        // Load App Open Ad
         AppOpenAd.load(mainApplication, appOpenId.trim(), request, object : AppOpenAd.AppOpenAdLoadCallback() {
             override fun onAdLoaded(ad: AppOpenAd) {
                 Log.i("AdsInformation", "OpenApp -> loadAppOpen: onAdLoaded: loaded")
@@ -128,6 +160,9 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
         })
     }
 
+    /**
+     * Shows the App Open Ad if conditions are met.
+     */
     fun showAd() {
         Log.d("AdsInformation", "OpenApp -> showAd: called")
         // If the app open ad is already showing, do not show the ad again.
@@ -136,32 +171,38 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
             return
         }
 
+        // Check if user has premium access
         if (diComponent.isAppPurchased) {
             Log.e("AdsInformation", "OpenApp -> showAd: Premium User")
             return
         }
 
+        // Check if current activity is null
         if (currentActivity == null) {
             Log.e("AdsInformation", "OpenApp -> showAd: CurrentActivity is Null")
             return
         }
 
+        // Check if another ad is already showing
         if (currentActivity is AdActivity) {
             Log.e("AdsInformation", "OpenApp -> showAd: Another Ad is showing")
             return
         }
 
+        // Check if it's the splash screen
         if (isSplash) {
             Log.e("AdsInformation", "OpenApp -> showAd: Cannot show on Splash")
             return
         }
 
+        // Check if ad is available, otherwise load it
         if (!isAdAvailable()) {
             Log.e("AdsInformation", "OpenApp -> showAd: Ad is not available")
             loadAppOpen()
             return
         }
 
+        // Set full-screen content callback
         appOpenAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 Log.d("AdsInformation", "OpenApp -> showAd: onAdDismissedFullScreenContent: dismissed")
@@ -183,10 +224,20 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
         currentActivity?.let { appOpenAd?.show(it) }
     }
 
+    /**
+     * Checks if the App Open Ad is available and not expired.
+     *
+     * @return true if the ad is available and not expired, false otherwise.
+     */
     private fun isAdAvailable(): Boolean {
         return appOpenAd != null && !wasAdExpired()
     }
 
+    /**
+     * Checks if the loaded App Open Ad has expired.
+     *
+     * @return true if the ad has expired, false otherwise.
+     */
     private fun wasAdExpired(): Boolean {
         val dateDifference: Long = Date().time - loadTime
         val numMilliSecondsPerHour: Long = 3600000
@@ -198,6 +249,10 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
         return isExpired
     }
 
+    /**
+     * Resets the App Open Ad manager when you exit the app
+     * Unregisters lifecycle callbacks and clears references.
+     */
     fun reset() {
         ProcessLifecycleOwner.get().lifecycle.removeObserver(defaultLifecycleObserver)
         mainApplication.unregisterActivityLifecycleCallbacks(this)
