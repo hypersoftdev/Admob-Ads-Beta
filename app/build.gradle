@@ -11,8 +11,8 @@ android {
         applicationId "com.hypersoft.admobadsbeta"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 217
+        versionName "2.1.217"
     }
 
     buildTypes {

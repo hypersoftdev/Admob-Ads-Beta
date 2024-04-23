@@ -22,11 +22,29 @@ import com.hypersoft.admobadsbeta.ads.interstitial.callbacks.InterstitialOnShowC
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Abstract class providing base functionality for Interstitial Ad management.
+ */
 abstract class InterstitialRepository {
 
+    // Interstitial Ad instance
     private var mInterstitialAd: InterstitialAd? = null
+
+    // Flag to track whether Interstitial Ad is loading
     private var isInterLoading = false
 
+    /**
+     * Loads an Interstitial Ad.
+     *
+     * @param context Context instance.
+     * @param adType The type of Interstitial Ad to load.
+     * @param interId The ID of the Interstitial Ad.
+     * @param adEnable Flag indicating whether the ad is enabled remotely.
+     * @param isAppPurchased Flag indicating whether the user has purchased the app.
+     * @param isInternetConnected Flag indicating whether the device is connected to the internet.
+     * @param canRequestAdsConsent Flag indicating whether consent is permitted for ad calls.
+     * @param listener Callback to handle load events.
+     */
     protected fun loadInterstitial(
         context: Context?,
         adType: String,
@@ -111,12 +129,21 @@ abstract class InterstitialRepository {
             })
     }
 
+    /**
+     * Shows an Interstitial Ad.
+     *
+     * @param activity The activity where the ad should be displayed.
+     * @param adType The type of Interstitial Ad to show.
+     * @param isAppPurchased Flag indicating whether the user has purchased the app.
+     * @param listener Callback to handle show events.
+     */
     protected fun showInterstitial(
         activity: Activity?,
         adType: String,
         isAppPurchased: Boolean,
         listener: InterstitialOnShowCallBack?
     ) {
+        // Check various conditions before showing the Interstitial Ad
 
         if (isInterstitialLoaded().not()) {
             Log.e("AdsInformation", "$adType -> showInterstitial: Interstitial is not loaded yet")
@@ -176,6 +203,11 @@ abstract class InterstitialRepository {
         mInterstitialAd?.show(activity)
     }
 
+    /**
+     * Checks if an Interstitial Ad is loaded.
+     *
+     * @return True if an Interstitial Ad is loaded, false otherwise.
+     */
     fun isInterstitialLoaded(): Boolean {
         return mInterstitialAd != null
     }

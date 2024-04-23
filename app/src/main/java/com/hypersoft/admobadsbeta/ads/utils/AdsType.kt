@@ -8,6 +8,9 @@ package com.hypersoft.admobadsbeta.ads.utils
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Object defining constants for different types of ads.
+ */
 object AdsType {
 
     const val BANNER_ONE = "BANNER_ONE"
@@ -18,6 +21,7 @@ object AdsType {
     const val INTER_SPLASH = "Splash"
     const val INTER_HOME = "Home"
     const val INTER_SAVE = "Save"
+
     const val REWARDED_FEATURE = "Feature"
 
     const val NATIVE_ONE = "NATIVE_ONE"
