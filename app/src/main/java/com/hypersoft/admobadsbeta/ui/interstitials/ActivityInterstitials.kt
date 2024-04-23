@@ -37,7 +37,7 @@ class ActivityInterstitials : AppCompatActivity() {
 
         findViewById<MaterialTextView>(R.id.mtv_title).text = "Interstitial: loading"
         // UseCase # 1
-        //interstitialAdsConfig.loadInterstitialAd(adType = AdsType.INTER_SPLASH)
+        interstitialAdsConfig.loadInterstitialAd(adType = AdsType.INTER_SPLASH)
 
         // UseCase # 2
         interstitialAdsConfig.loadInterstitialAd(

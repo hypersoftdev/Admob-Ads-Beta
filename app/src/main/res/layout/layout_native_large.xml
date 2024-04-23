@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_rounded_container">
+        android:background="@drawable/ads_bg_rounded_container">
 
         <androidx.constraintlayout.utils.widget.ImageFilterView
             android:id="@+id/ad_app_icon"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_rounded_filled"
+            android:background="@drawable/ads_bg_rounded_filled"
             android:includeFontPadding="false"
             android:padding="4dp"
             android:text="@string/ad"

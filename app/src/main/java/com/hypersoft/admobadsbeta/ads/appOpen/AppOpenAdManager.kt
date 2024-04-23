@@ -16,6 +16,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
 import com.hypersoft.admobadsbeta.MainApplication
+import com.hypersoft.admobadsbeta.R
 import com.hypersoft.admobadsbeta.di.DiComponent
 import java.util.Date
 
@@ -36,9 +37,8 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
 
     private var loadTime = 0L
 
-    private var showingAppOpen = false
-    private var isLoadingAd = false
     private var isShowingAd = false
+    private var isLoadingAd = false
     var isSplash = true
 
     /* --------------------------------------- Manage --------------------------------------- */
@@ -60,9 +60,7 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
 
     override fun onActivityStarted(activity: Activity) {
         Log.d("AdsInformation", "OpenApp -> onActivityStarted: called")
-        if (!isShowingAd) {
-            currentActivity = activity
-        }
+        currentActivity = activity
     }
 
     override fun onActivityPaused(activity: Activity) {}
@@ -74,14 +72,7 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
 
     /* --------------------------------------- Load & Show --------------------------------------- */
 
-    private var appOpenId = ""
-    private var remoteConfigValue = 0
-    var dismissCallback: (() -> Unit)? = null
-
-    fun setValues(appOpenId: String, remoteConfigValue: Int) {
-        this.appOpenId = appOpenId
-        this.remoteConfigValue = remoteConfigValue
-    }
+    private val appOpenId by lazy { mainApplication.getString(R.string.admob_app_open_id) }
 
     fun loadAppOpen() {
         if (isAdAvailable()) {
@@ -109,7 +100,7 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
             return
         }
 
-        if (remoteConfigValue != 1) {
+        if (diComponent.rcvAppOpen != 1) {
             Log.e("AdsInformation", "OpenApp -> loadAppOpen: Remote Configuration: Ad is off")
             return
         }
@@ -176,7 +167,6 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
                 Log.d("AdsInformation", "OpenApp -> showAd: onAdDismissedFullScreenContent: dismissed")
                 appOpenAd = null
                 isShowingAd = false
-                dismissCallback?.invoke()
                 loadAppOpen()
             }
 
@@ -190,11 +180,12 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
             }
         }
         isShowingAd = true
-        showingAppOpen = true
         currentActivity?.let { appOpenAd?.show(it) }
     }
 
-    private fun isAdAvailable() = appOpenAd != null && !wasAdExpired()
+    private fun isAdAvailable(): Boolean {
+        return appOpenAd != null && !wasAdExpired()
+    }
 
     private fun wasAdExpired(): Boolean {
         val dateDifference: Long = Date().time - loadTime
@@ -215,5 +206,4 @@ class AppOpenAdManager(private val mainApplication: MainApplication) : Applicati
         isSplash = true
         Log.e("AdsInformation", "OpenApp -> reset: appOpenAd")
     }
-
 }

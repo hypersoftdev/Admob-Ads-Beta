@@ -222,6 +222,4 @@ class NativeRegularRepository {
         this.removeAllViews()
         view?.let { this.addView(it) }
     }
-
-
 }
