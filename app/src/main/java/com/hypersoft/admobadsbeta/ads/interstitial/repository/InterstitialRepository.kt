@@ -55,13 +55,14 @@ abstract class InterstitialRepository {
         canRequestAdsConsent: Boolean,
         listener: InterstitialOnLoadCallBack?,
     ) {
-
+        // Check if the interstitial ad is already loaded
         if (isInterstitialLoaded()) {
             Log.i("AdsInformation", "$adType -> loadInterstitial: Already loaded")
             listener?.onResponse()
             return
         }
 
+        // Check if a interstitial ad is currently loading
         if (isInterLoading) {
             Log.d("AdsInformation", "$adType -> loadInterstitial: Ad is already loading...")
             // No need to invoke callback, in some cases (e.g. activity recreation) it interrupts our response, as we are waiting for response in Splash
@@ -69,36 +70,42 @@ abstract class InterstitialRepository {
             return
         }
 
+        // Check if the user is a premium user
         if (isAppPurchased) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Premium user")
             listener?.onResponse()
             return
         }
 
+        // Check if the remote config for the ad is disabled
         if (adEnable.not()) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Remote config is off")
             listener?.onResponse()
             return
         }
 
+        // Check if the internet is not connected
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Internet is not connected")
             listener?.onResponse()
             return
         }
 
+        // Check if consent is not permitted for ad calls
         if (canRequestAdsConsent.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Consent not permitted for ad calls")
             listener?.onResponse()
             return
         }
 
+        // Check if the context is null
         if (context == null) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Context is null")
             listener?.onResponse()
             return
         }
 
+        // Check if the interstitial ad ID is empty
         if (interId.trim().isEmpty()) {
             Log.e("AdsInformation", "$adType -> loadInterstitial: Ad id is empty")
             listener?.onResponse()
@@ -143,14 +150,15 @@ abstract class InterstitialRepository {
         isAppPurchased: Boolean,
         listener: InterstitialOnShowCallBack?
     ) {
-        // Check various conditions before showing the Interstitial Ad
 
+        // Check if the interstitial ad is already loaded
         if (isInterstitialLoaded().not()) {
             Log.e("AdsInformation", "$adType -> showInterstitial: Interstitial is not loaded yet")
             listener?.onAdFailedToShow()
             return
         }
 
+        // Check if the user is a premium user
         if (isAppPurchased) {
             Log.e("AdsInformation", "$adType -> showInterstitial: Premium user")
             if (isInterstitialLoaded()) {
@@ -161,12 +169,14 @@ abstract class InterstitialRepository {
             return
         }
 
+        // Check if the activity reference is null
         if (activity == null) {
             Log.e("AdsInformation", "$adType -> showInterstitial: activity reference is null")
             listener?.onAdFailedToShow()
             return
         }
 
+        // Check if the activity is finishing or destroyed
         if (activity.isFinishing || activity.isDestroyed) {
             Log.e("AdsInformation", "$adType -> showInterstitial: activity is finishing or destroyed")
             listener?.onAdFailedToShow()
@@ -175,6 +185,7 @@ abstract class InterstitialRepository {
 
         Log.d("AdsInformation", "$adType -> showInterstitial: showing ad")
 
+        // Set full screen content callback for the interstitial ad
         mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 Log.d("AdsInformation", "admob Interstitial onAdDismissedFullScreenContent")
@@ -208,7 +219,7 @@ abstract class InterstitialRepository {
      *
      * @return True if an Interstitial Ad is loaded, false otherwise.
      */
-    fun isInterstitialLoaded(): Boolean {
+    protected fun isInterstitialLoaded(): Boolean {
         return mInterstitialAd != null
     }
 }

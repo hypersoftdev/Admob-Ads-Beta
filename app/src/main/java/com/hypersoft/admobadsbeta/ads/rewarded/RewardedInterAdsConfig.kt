@@ -21,13 +21,22 @@ import com.hypersoft.admobadsbeta.di.DiComponent
  */
 
 /**
- * @param context: Can be of application class
+ * Configurations and operations for rewarded interstitial ads.
+ *
+ * @param context The context, which can be of the application class.
  */
 
 class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepository() {
 
+    // Lazy initialization of DI component
     private val diComponent by lazy { DiComponent() }
 
+    /**
+     * Loads a rewarded interstitial ad.
+     *
+     * @param adType The type of the rewarded interstitial ad.
+     * @param listener Callback to handle load events.
+     */
     fun loadRewardedInterAd(adType: String, listener: RewardedOnLoadCallBack? = null) {
         var interAdId = ""
         var isRemoteEnable = false
@@ -39,6 +48,7 @@ class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepos
             }
         }
 
+        // Load the rewarded interstitial ad
         loadRewardedInter(
             context = context,
             adType = adType,
@@ -51,6 +61,13 @@ class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepos
         )
     }
 
+    /**
+     * Shows a rewarded interstitial ad.
+     *
+     * @param activity The activity.
+     * @param adType The type of the rewarded interstitial ad.
+     * @param listener Callback to handle show events.
+     */
     fun showRewardedInterAd(activity: Activity?, adType: String, listener: RewardedOnShowCallBack? = null) {
         showRewardedInter(
             activity = activity,
@@ -60,6 +77,12 @@ class RewardedInterAdsConfig(private val context: Context?) : RewardedInterRepos
         )
     }
 
+    /**
+     * Retrieves a string resource by its resource ID.
+     *
+     * @param resId The resource ID of the string.
+     * @return The string value, or an empty string if the resource is not found or if the context is null.
+     */
     private fun getResString(@StringRes resId: Int): String {
         return context?.resources?.getString(resId) ?: ""
     }

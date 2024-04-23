@@ -24,6 +24,8 @@ android {
 
             // Inter
             resValue "string", "admob_inter_id", "ca-app-pub-3940256099942544/1033173712"
+
+            // Rewarded
             resValue "string", "admob_rewarded_id", "ca-app-pub-3940256099942544/5224354917"
             resValue "string", "admob_rewarded_inter_id", "ca-app-pub-3940256099942544/5354046379"
 
@@ -47,6 +49,8 @@ android {
 
             // Inter
             resValue "string", "admob_inter_id", "ca-app-pub-3940256099942544/1033173712"
+
+            // Rewarded
             resValue "string", "admob_rewarded_id", "ca-app-pub-3940256099942544/5224354917"
             resValue "string", "admob_rewarded_inter_id", "ca-app-pub-3940256099942544/5354046379"
 
