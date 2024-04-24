@@ -8,6 +8,9 @@ package com.hypersoft.admobadsbeta.ads.banners.enums
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Enumeration defining different types of banner ads.
+ */
 enum class BannerType {
     ADAPTIVE,
     COLLAPSIBLE_TOP,
