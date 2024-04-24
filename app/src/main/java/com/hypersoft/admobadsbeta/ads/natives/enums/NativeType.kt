@@ -8,6 +8,9 @@ package com.hypersoft.admobadsbeta.ads.natives.enums
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Enum class representing different types of native ads.
+ */
 enum class NativeType {
     NATIVE_BANNER,
     NATIVE_BANNER_SMART,
