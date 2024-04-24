@@ -125,7 +125,7 @@ abstract class NativeRepository {
             return
         }
 
-        // Check activity validity
+        // Check if the activity is finishing or destroyed
         if (activity.isFinishing || activity.isDestroyed) {
             Log.e("AdsInformation", "$adType -> loadNative: activity is finishing or destroyed")
             listener?.onResponse(false)

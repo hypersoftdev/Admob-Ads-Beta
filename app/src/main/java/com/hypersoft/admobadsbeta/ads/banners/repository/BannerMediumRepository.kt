@@ -45,6 +45,19 @@ class BannerMediumRepository {
     private val impressionList: MutableList<BannerResponse> = mutableListOf()
     private val deleteList: MutableList<BannerResponse> = mutableListOf()
 
+    /**
+     * Loads a banner ad based on the provided parameters.
+     *
+     * @param activity The activity context.
+     * @param adType The type of the ad.
+     * @param bannerId The ID of the banner ad.
+     * @param isAdEnable Indicates if the ad is enabled.
+     * @param isAppPurchased Indicates if the app is purchased.
+     * @param isInternetConnected Indicates if the device is connected to the internet.
+     * @param canRequestAdsConsent Indicates if consent for ad requests is granted.
+     * @param viewGroup The view group in which the ad will be displayed.
+     * @param listener The banner ad callback listener.
+     */
     fun loadBanner(
         activity: Activity?,
         adType: String,
@@ -65,42 +78,49 @@ class BannerMediumRepository {
         this.canRequestAdsConsent = canRequestAdsConsent
         this.listener = listener
 
+        // Check if app is purchased
         if (isAppPurchased) {
             Log.e("AdsInformation", "$adType -> loadBanner: Premium user")
             listener?.onResponse(false)
             return
         }
 
+        // Check if ads are enabled
         if (isAdEnable.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Remote config is off")
             listener?.onResponse(false)
             return
         }
 
+        // Check internet connection
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Internet is not connected")
             listener?.onResponse(false)
             return
         }
 
+        // Check if consent is permitted for ad calls
         if (canRequestAdsConsent.not()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }
 
+        // Check activity validity
         if (activity == null) {
             Log.e("AdsInformation", "$adType -> loadBanner: Context is null")
             listener?.onResponse(false)
             return
         }
 
+        // Check if the activity is finishing or destroyed
         if (activity.isFinishing || activity.isDestroyed) {
             Log.e("AdsInformation", "$adType -> loadBanner: activity is finishing or destroyed")
             listener?.onResponse(false)
             return
         }
 
+        // Check if nativeId is empty
         if (bannerId.trim().isEmpty()) {
             Log.e("AdsInformation", "$adType -> loadBanner: Ad id is empty")
             listener?.onResponse(false)
@@ -152,6 +172,7 @@ class BannerMediumRepository {
         }
     }
 
+    // Load Medium Banner Ad
     private fun loadAd(activity: Activity, bannerId: String, adType: String, listener: BannerCallBack?) {
         isBannerLoading = true
 
@@ -166,6 +187,7 @@ class BannerMediumRepository {
         adView.loadAd(adRequest)
     }
 
+    // Callback for ad loading events
     private fun getListener(adType: String, adView: AdView, listener: BannerCallBack?): AdListener {
         return object : AdListener() {
             override fun onAdLoaded() {
@@ -211,6 +233,7 @@ class BannerMediumRepository {
         }
     }
 
+    // show medium banner ad
     protected fun showBanner(bannerResponse: BannerResponse) {
         if (isAppPurchased) {
             Log.e("AdsInformation", "${bannerResponse.adType} -> showBanner: Premium user")
@@ -246,12 +269,19 @@ class BannerMediumRepository {
         }
     }
 
+    // Helper function to add a view to a view group and clean up existing views
     private fun ViewGroup.addCleanView(view: View?) {
         (view?.parent as? ViewGroup)?.removeView(view)
         this.removeAllViews()
         view?.let { this.addView(it) }
     }
 
+
+    /**
+     * Destroys the banner ad based on the provided ad type.
+     *
+     * @param adType The type of the ad.
+     */
     fun onDestroy(adType: String) {
         impressionList.find { it.adType == adType }?.let { node ->
             if (usingAdView == node.adView) {

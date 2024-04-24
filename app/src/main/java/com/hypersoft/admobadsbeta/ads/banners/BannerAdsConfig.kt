@@ -23,6 +23,7 @@ import com.hypersoft.admobadsbeta.di.DiComponent
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+
 class BannerAdsConfig : BannerRepository() {
 
     private val diComponent by lazy { DiComponent() }
@@ -30,6 +31,14 @@ class BannerAdsConfig : BannerRepository() {
     private val bannerCollapsibleTopRepository by lazy { BannerCollapsibleTopRepository() }
     private val bannerCollapsibleBottomRepository by lazy { BannerCollapsibleBottomRepository() }
 
+    /**
+     * Loads a banner ad based on the provided parameters.
+     *
+     * @param activity The activity context.
+     * @param adType The type of the ad.
+     * @param viewGroup The view group in which the ad will be displayed.
+     * @param listener The banner ad callback listener.
+     */
     fun loadBannerAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: BannerCallBack? = null) {
         var bannerId = ""
         var isRemoteEnable = false
@@ -120,6 +129,11 @@ class BannerAdsConfig : BannerRepository() {
         }
     }
 
+    /**
+     * Destroys the banner ad based on the provided ad type.
+     *
+     * @param adType The type of the ad.
+     */
     fun destroyBanner(adType: String) {
         var bannerType = BannerType.ADAPTIVE
         when (adType) {
