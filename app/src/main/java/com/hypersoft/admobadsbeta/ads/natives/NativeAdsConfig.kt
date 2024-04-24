@@ -21,11 +21,23 @@ import com.hypersoft.admobadsbeta.di.DiComponent
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Class for managing native ads configurations and loading.
+ * @property diComponent Lazy delegate for accessing DI components.
+ * @property nativeRegularRepository Lazy delegate for accessing NativeRegularRepository.
+ */
 class NativeAdsConfig : NativeRepository() {
 
     private val diComponent by lazy { DiComponent() }
     private val nativeRegularRepository by lazy { NativeRegularRepository() }
 
+    /**
+     * Loads a native ad.
+     * @param activity The activity where the ad will be loaded.
+     * @param adType Type of the ad.
+     * @param viewGroup ViewGroup where the native ad will be displayed.
+     * @param listener Callback for handling ad loading response.
+     */
     fun loadNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup?, listener: NativeCallBack? = null) {
         val nativeId = getNativeId(activity, adType)
         val isRemoteEnable = getRemoteEnable(adType)
@@ -45,6 +57,15 @@ class NativeAdsConfig : NativeRepository() {
         )
     }
 
+
+
+    /**
+     * Loads and shows a native ad.
+     * @param activity The activity where the ad will be loaded and shown.
+     * @param adType Type of the ad.
+     * @param viewGroup ViewGroup where the native ad will be displayed.
+     * @param listener Callback for handling ad loading response.
+     */
     fun loadAndShowNativeAd(activity: Activity?, adType: String, viewGroup: ViewGroup, listener: NativeCallBack? = null) {
         val nativeId = getNativeId(activity, adType)
         val isRemoteEnable = getRemoteEnable(adType)

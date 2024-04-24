@@ -12,6 +12,14 @@ import com.hypersoft.admobadsbeta.ads.natives.enums.NativeType
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Data class representing a response for a native ad.
+ * @property adType Type of the ad.
+ * @property nativeType Type of the native ad.
+ * @property isAdEnable Boolean indicating whether the ad is enabled.
+ * @property nativeAd Instance of the native ad.
+ * @property viewGroup ViewGroup where the native ad will be displayed.
+ */
 data class NativeResponse(
     val adType: String,
     var nativeType: NativeType,

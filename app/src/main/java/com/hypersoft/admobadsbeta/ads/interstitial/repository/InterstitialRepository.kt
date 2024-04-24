@@ -219,7 +219,7 @@ abstract class InterstitialRepository {
      *
      * @return True if an Interstitial Ad is loaded, false otherwise.
      */
-    protected fun isInterstitialLoaded(): Boolean {
+    fun isInterstitialLoaded(): Boolean {
         return mInterstitialAd != null
     }
 }

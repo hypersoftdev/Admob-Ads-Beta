@@ -34,6 +34,9 @@ import kotlinx.coroutines.launch
  *      -> https://stackoverflow.com/users/20440272/sohaib-ahmed
  */
 
+/**
+ * Abstract class for managing native ads.
+ */
 abstract class NativeRepository {
 
     private var mActivity: Activity? = null
@@ -53,6 +56,19 @@ abstract class NativeRepository {
     private val impressionList: MutableList<NativeResponse> = mutableListOf()
     private val deleteList: MutableList<NativeResponse> = mutableListOf()
 
+    /**
+     * Loads a native ad.
+     * @param activity The activity where the ad will be loaded.
+     * @param adType Type of the ad.
+     * @param nativeId ID of the native ad.
+     * @param nativeType Type of the native ad.
+     * @param isAdEnable Indicates if ads are enabled.
+     * @param isAppPurchased Indicates if the app is purchased.
+     * @param isInternetConnected Indicates if the internet is connected.
+     * @param canRequestAdsConsent Indicates if consent is permitted for ad calls.
+     * @param viewGroup ViewGroup where the native ad will be displayed.
+     * @param listener Callback for handling ad loading response.
+     */
     protected fun loadNative(
         activity: Activity?,
         adType: String,
@@ -74,42 +90,49 @@ abstract class NativeRepository {
         this.canRequestAdsConsent = canRequestAdsConsent
         this.listener = listener
 
+        // Check if app is purchased
         if (isAppPurchased) {
             Log.e("AdsInformation", "$adType -> loadNative: Premium user")
             listener?.onResponse(false)
             return
         }
 
+        // Check if ads are enabled
         if (isAdEnable.not()) {
             Log.e("AdsInformation", "$adType -> loadNative: Remote config is off")
             listener?.onResponse(false)
             return
         }
 
+        // Check internet connection
         if (isInternetConnected.not()) {
             Log.e("AdsInformation", "$adType -> loadNative: Internet is not connected")
             listener?.onResponse(false)
             return
         }
 
+        // Check if consent is permitted for ad calls
         if (canRequestAdsConsent.not()) {
             Log.e("AdsInformation", "$adType -> loadNative: Consent not permitted for ad calls")
             listener?.onResponse(false)
             return
         }
 
+        // Check activity validity
         if (activity == null) {
             Log.e("AdsInformation", "$adType -> loadNative: Context is null")
             listener?.onResponse(false)
             return
         }
 
+        // Check activity validity
         if (activity.isFinishing || activity.isDestroyed) {
             Log.e("AdsInformation", "$adType -> loadNative: activity is finishing or destroyed")
             listener?.onResponse(false)
             return
         }
 
+        // Check if nativeId is empty
         if (nativeId.trim().isEmpty()) {
             Log.e("AdsInformation", "$adType -> loadNative: Ad id is empty")
             listener?.onResponse(false)
@@ -332,6 +355,10 @@ abstract class NativeRepository {
         view?.let { this.addView(it) }
     }
 
+    /**
+     * Cleans up resources associated with the specified ad type.
+     * @param adType Type of the ad to be destroyed.
+     */
     fun onDestroy(adType: String) {
         Log.d("AdsInformation", "$adType -> NativeRepository: Request generated for destruction...")
         impressionList.find { it.adType == adType }?.let { node ->
